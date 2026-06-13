@@ -49,6 +49,16 @@ Routing rules:
 - Grade B → Refurbish
 - Grade C → Donate
 - Grade D → Recycle
+
+Grading criteria:
+- Grade A: Like new, no visible damage, all accessories present.
+- Grade B: Minor cosmetic wear only (scratches, scuffs), fully functional. Missing accessories alone is acceptable for Grade B.
+- Grade C: Visible damage, may have functional issues, significantly incomplete.
+- Grade D: Severe damage, non-functional, or safety concerns.
+
+Important rules:
+- Missing accessories alone should NOT drop an item below Grade B.
+- Packaging score should NOT affect the grade — only cosmetic and functional scores determine the grade and routing.
 """
 
 

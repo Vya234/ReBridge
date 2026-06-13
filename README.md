@@ -1,4 +1,4 @@
-# ReBridge — AI-Powered Returns Routing & Sustainable Resale Platform
+# ReBridge : AI-Powered Returns Routing & Sustainable Resale Platform
 
 ![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20DynamoDB%20%7C%20Bedrock-FF9900?logo=amazonaws)
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)
