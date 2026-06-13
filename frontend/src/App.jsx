@@ -2,6 +2,7 @@ import { useState } from 'react'
 import HomePage from './components/HomePage'
 import EvaluatePage from './components/EvaluatePage'
 import ResultPage from './components/ResultPage'
+import ShopPage from './components/ShopPage'
 
 const API_BASE = 'https://s3r8aqjg75.execute-api.ap-south-1.amazonaws.com'
 
@@ -48,7 +49,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Minimal top bar */}
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-between">
           <button
@@ -57,14 +58,24 @@ function App() {
           >
             ReBridge
           </button>
-          {page !== 'home' && (
+          <div className="flex items-center gap-6">
             <button
-              onClick={() => { setPage('home'); setResult(null); setError(null) }}
-              className="text-xs font-sans uppercase tracking-[0.2em] text-charcoal/50 hover:text-terracotta transition-colors"
+              onClick={() => setPage('shop')}
+              className={`text-xs font-sans uppercase tracking-[0.2em] transition-colors ${
+                page === 'shop' ? 'text-terracotta' : 'text-charcoal/50 hover:text-terracotta'
+              }`}
             >
-              ← Home
+              Shop Refurbished
             </button>
-          )}
+            {page !== 'home' && (
+              <button
+                onClick={() => { setPage('home'); setResult(null); setError(null) }}
+                className="text-xs font-sans uppercase tracking-[0.2em] text-charcoal/50 hover:text-terracotta transition-colors"
+              >
+                ← Home
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -85,6 +96,7 @@ function App() {
         {page === 'result' && result && (
           <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} />
         )}
+        {page === 'shop' && <ShopPage />}
       </main>
     </div>
   )
