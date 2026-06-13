@@ -1,0 +1,6 @@
+item_id,category,condition_notes,simulated_image_label
+BULK-001,Electronics,Laptop with minor scratches on lid and trackpad wear. Fully functional all ports working.,scratched_laptop
+BULK-002,Clothing,Winter jacket with small tear near left pocket. Zipper works fine. Slight fading on shoulders.,torn_jacket
+BULK-003,Books,Textbook with highlighted pages and dog-eared corners. Cover has coffee stain. Spine intact.,used_textbook
+BULK-004,Home,Ceramic vase with hairline crack near base. No chips on rim. Original packaging missing.,cracked_vase
+BULK-005,Electronics,Wireless earbuds working perfectly. Case has scuff marks. Missing one silicone tip.,scuffed_earbuds

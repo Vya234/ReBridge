@@ -5,6 +5,7 @@ import ResultPage from './components/ResultPage'
 import ShopPage from './components/ShopPage'
 import HistoryPage from './components/HistoryPage'
 import WelcomeModal from './components/WelcomeModal'
+import SellerPortal from './components/SellerPortal'
 
 const API_BASE = 'https://s3r8aqjg75.execute-api.ap-south-1.amazonaws.com'
 
@@ -131,6 +132,14 @@ function App() {
             >
               History
             </button>
+            <button
+              onClick={() => setPage('seller')}
+              className={`text-xs font-sans uppercase tracking-[0.2em] transition-colors ${
+                page === 'seller' ? 'text-terracotta' : 'text-charcoal/50 hover:text-terracotta'
+              }`}
+            >
+              Seller Portal
+            </button>
             {/* Switch User */}
             <button
               onClick={handleSwitchUser}
@@ -170,6 +179,7 @@ function App() {
         )}
         {page === 'shop' && <ShopPage />}
         {page === 'history' && <HistoryPage />}
+        {page === 'seller' && <SellerPortal />}
       </main>
     </div>
   )
