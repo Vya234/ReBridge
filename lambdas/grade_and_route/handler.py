@@ -1,7 +1,7 @@
 """
 Lambda: grade_and_route
 Endpoint: POST /evaluate-return
-Evaluates a returned item using Amazon Bedrock (Claude Sonnet) and writes
+Evaluates a returned item using Amazon Nova Micro via Bedrock and writes
 the result to DynamoDB.
 """
 
@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "shared"))
 import db_client
 
 REGION = "ap-south-1"
-MODEL_ID = "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
+MODEL_ID = "apac.amazon.nova-micro-v1:0"
 
 bedrock = boto3.client("bedrock-runtime", region_name=REGION)
 
@@ -52,27 +52,24 @@ Routing rules:
 """
 
 
-def invoke_bedrock(prompt: str) -> dict:
-    """Call Bedrock Claude Sonnet and return parsed JSON."""
-    body = json.dumps({
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 512,
-        "messages": [
-            {"role": "user", "content": prompt}
-        ],
-    })
-
+def invoke_nova(prompt: str) -> dict:
+    """Call Amazon Nova Micro via Bedrock and return parsed JSON."""
     response = bedrock.invoke_model(
         modelId=MODEL_ID,
-        contentType="application/json",
-        accept="application/json",
-        body=body,
+        body=json.dumps({
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [{"text": prompt}]
+                }
+            ]
+        }),
     )
 
     response_body = json.loads(response["body"].read())
-    assistant_text = response_body["content"][0]["text"]
+    assistant_text = response_body["output"]["message"]["content"][0]["text"]
 
-    # Parse the JSON from Claude's response
+    # Parse the JSON from Nova's response
     return json.loads(assistant_text)
 
 
@@ -90,9 +87,9 @@ def lambda_handler(event, context):
         condition_notes = body["condition_notes"]
         simulated_image_label = body["simulated_image_label"]
 
-        # Call Bedrock for grading
+        # Call Nova for grading
         prompt = build_prompt(category, condition_notes, simulated_image_label)
-        ai_result = invoke_bedrock(prompt)
+        ai_result = invoke_nova(prompt)
 
         # Build full record
         record = {
@@ -128,5 +125,3 @@ def lambda_handler(event, context):
             "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"error": str(e)}),
         }
-
-
