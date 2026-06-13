@@ -6,90 +6,111 @@
 
 # Every Return Finds a New Life
 
-**ReBridge** — AI-Powered Returns Routing & Sustainable Resale Platform
+**ReBridge** — AI-Powered Circular Commerce Platform
 
 🏆 Amazon HackOn Season 6 | Theme: Second Life Commerce  
-👤 Team: lazyBot (Kavya Rai, Oindrila Singha)
+👤 Team **lazyBot** — Kavya Rai & Oindrila Singha
+
+🔗 Live: [https://d12xi8surv8so8.cloudfront.net](https://d12xi8surv8so8.cloudfront.net)
 
 ---
 
 ## SLIDE 2: The Problem
 
-- Amazon loses **$28B annually** to processing returns.
-- **17–30%** of every e-commerce order is returned.
-- Most returned items go straight to landfill despite being perfectly usable.
-- Customers don't trust refurbished products — the trust gap kills resale before it starts.
-- No system connects return grading, resale, and prevention in one loop.
+Three real personas from Amazon's brief:
 
-> The returns problem isn't logistics — it's lost intelligence.
+**Priya** returns ₹500 shoes — they travel 600km to a warehouse. Processing costs more than the item. Written off.
+
+**Rahul** has a perfectly working baby monitor — won't list on OLX because strangers feel unsafe. Sits in a drawer forever.
+
+**Small Seller** processes 200+ returns/month manually — photographs each item, guesses a price, re-lists one by one.
+
+> Amazon loses **$28B/year** to returns.  
+> Most items go to **landfill** despite being usable.  
+> Customers **don't trust** refurbished products.
 
 ---
 
 ## SLIDE 3: The Solution
 
-**ReBridge creates an intelligent product lifecycle loop:**
+One intelligent loop that closes every gap:
 
 ```
 Return initiated
-    → AI grades condition in <2 seconds
-        → Smart routing: Resell / Refurbish / Donate / Recycle
-            → Item listed with transparent Health Card
-                → Next buyer finds certified refurb at 35% less
-                    → Pre-purchase risk check prevents future returns
+  → AI grades condition in 2 seconds
+    → Routes to Resell / Refurbish / Donate / Recycle
+      → Product Health Card created (trust scores)
+        → Listed on certified refurb store (35% cheaper)
+          → Buyer negotiates via P2P real-time chat
+            → Green Credits earned for sustainable choices
+              → Pre-purchase check prevents the next return
 ```
 
-One platform. Full circle. Every item finds its highest-value second life.
+Every Amazon requirement. One platform. Full circle.
 
 ---
 
-## SLIDE 4: Live Demo Flow
+## SLIDE 4: 9 Features Built in 48 Hours
 
-1. Customer returns a laptop — enters condition notes.
-2. Amazon Nova AI **grades it B (Good) in under 2 seconds**.
-3. Product Health Card generated: Cosmetic 70 · Functional 95 · Packaging 80.
-4. Automatically routed to **Refurbish**.
-5. Item appears on **Shop Certified Refurbished** with trust scores visible.
-6. Next buyer purchases it and **saves 35% vs new**.
-7. Pre-purchase risk check warns high-return categories before checkout.
+| # | Feature | What It Does |
+|---|---------|-------------|
+| 1 | **AI Grading Engine** | Amazon Nova grades items A/B/C/D in <2 seconds |
+| 2 | **Product Health Card** | Trust breakdown: cosmetic, functional, packaging scores |
+| 3 | **Shop Certified Refurbished** | Browse AI-graded inventory, save 35% vs new |
+| 4 | **Return History Dashboard** | Full audit trail with expandable detail rows |
+| 5 | **Check Before You Buy** | Pre-purchase risk assessment prevents returns |
+| 6 | **Green Credits Wallet** | Per-user persistent rewards for sustainable routing |
+| 7 | **User Identity** | No login needed — name-based tracking via localStorage |
+| 8 | **Seller Bulk Upload** | CSV → batch AI grading with live progress |
+| 9 | **P2P Real-time Chat** | WebSocket negotiation between buyer and seller |
 
 ---
 
 ## SLIDE 5: Tech Stack
 
-| Layer | Choice |
-|-------|--------|
-| Frontend | React + Tailwind on **AWS S3** |
-| Backend | **AWS Lambda** (Python 3.12) + **API Gateway** (HTTP) |
-| AI Engine | **Amazon Bedrock** — Nova Micro (`apac.amazon.nova-micro-v1:0`) |
-| Database | **Amazon DynamoDB** (on-demand, zero-config) |
-| Dev Approach | Built with **Kiro** spec-driven IDE in **48 hours** |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + Tailwind → **AWS S3 + CloudFront** |
+| Backend | **AWS Lambda** (Python 3.12) + **API Gateway** (HTTP + WebSocket) |
+| AI | **Amazon Bedrock** — Nova Micro (`apac.amazon.nova-micro-v1:0`) |
+| Database | **DynamoDB** — 3 tables (ProductHealthCards, GreenWallet, ChatConnections) |
+| Dev | Built with **Kiro** spec-driven IDE in 48 hours |
 
-Fully serverless. Zero infrastructure maintenance. Scales to millions of returns.
+✅ All AWS-native. Zero third-party AI APIs. Fully serverless.
 
 ---
 
 ## SLIDE 6: ROI for Amazon
 
-- **20% return cost recovery** = $5.6B saved annually.
-- New refurbished GMV stream at lower COGS than new inventory.
-- Customer lifetime value increases when trust is transparent.
-- Sustainability narrative strengthens brand value with conscious consumers.
-- Reduced landfill volume = measurable ESG impact.
+| Metric | Business Impact |
+|--------|----------------|
+| 20% return cost recovery | **$5.6B saved annually** |
+| New refurb GMV stream | Revenue at lower COGS than new inventory |
+| P2P commission revenue | New transaction fee stream on resale |
+| Green Credits → loyalty | Higher customer LTV through engagement |
+| Sustainability story | Brand value with conscious consumers |
 
-> ReBridge turns a $28B cost center into a revenue engine.
+> Every feature drives measurable Amazon revenue.  
+> ReBridge turns a $28B cost center into a commerce engine.
 
 ---
 
-## SLIDE 7: What's Next
+## SLIDE 7: Live Demo
 
-- **Image upload** — real visual grading via Amazon Rekognition.
-- **Seller dashboard** — analytics on return patterns and grade distribution.
-- **Green credits** — reward customers who buy refurbished with loyalty points.
-- **Warehouse integration** — plug into Amazon fulfillment for automated routing.
-- **Multi-language** — expand trust cards to global marketplaces.
+🔗 **[https://d12xi8surv8so8.cloudfront.net](https://d12xi8surv8so8.cloudfront.net)**
+
+| Step | What You'll See |
+|------|----------------|
+| 1 | **Evaluate a Return** → AI grade in 2 seconds |
+| 2 | **Shop Certified Refurbished** → browse AI-graded inventory |
+| 3 | **Check Before You Buy** → return risk prevention |
+| 4 | **Seller Portal** → bulk CSV upload + batch grading |
+| 5 | **P2P Chat** → real-time negotiation on Resell items |
+
+Built in 48 hours. Fully deployed on AWS. Ready to scale.
 
 ---
 
 ## One Line
 
-**ReBridge uses AI to grade, route, and resurface returned products — turning Amazon's $28B return problem into a sustainable commerce engine.**
+**ReBridge gives every returned Amazon product a second life — graded by AI, routed intelligently, resold with trust, and rewarded with Green Credits.**
