@@ -8,7 +8,7 @@
 
 > **Every Return Finds a New Life**
 
-🔗 **Live Demo:** [rebridge-app-2026.s3-website.ap-south-1.amazonaws.com](http://rebridge-app-2026.s3-website.ap-south-1.amazonaws.com)  
+🔗 **Live Demo:** [rebridge-app-2026.s3-website.ap-south-1.amazonaws.com](https://d12xi8surv8so8.cloudfront.net)  
 📂 **GitHub:** [github.com/Vya234/ReBridge](https://github.com/Vya234/ReBridge)
 
 ---
