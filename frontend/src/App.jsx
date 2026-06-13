@@ -3,6 +3,7 @@ import HomePage from './components/HomePage'
 import EvaluatePage from './components/EvaluatePage'
 import ResultPage from './components/ResultPage'
 import ShopPage from './components/ShopPage'
+import HistoryPage from './components/HistoryPage'
 
 const API_BASE = 'https://s3r8aqjg75.execute-api.ap-south-1.amazonaws.com'
 
@@ -67,6 +68,14 @@ function App() {
             >
               Shop Refurbished
             </button>
+            <button
+              onClick={() => setPage('history')}
+              className={`text-xs font-sans uppercase tracking-[0.2em] transition-colors ${
+                page === 'history' ? 'text-terracotta' : 'text-charcoal/50 hover:text-terracotta'
+              }`}
+            >
+              History
+            </button>
             {page !== 'home' && (
               <button
                 onClick={() => { setPage('home'); setResult(null); setError(null) }}
@@ -97,6 +106,7 @@ function App() {
           <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} />
         )}
         {page === 'shop' && <ShopPage />}
+        {page === 'history' && <HistoryPage />}
       </main>
     </div>
   )
