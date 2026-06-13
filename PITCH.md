@@ -40,7 +40,7 @@ Return initiated
   → AI grades condition in 2 seconds
     → Routes to Resell / Refurbish / Donate / Recycle
       → Product Health Card created (trust scores)
-        → Listed on certified refurb store (35% cheaper)
+        → Listed on certified refurb store (AI-priced)
           → Buyer negotiates via P2P real-time chat
             → Green Credits earned for sustainable choices
               → Pre-purchase check prevents the next return
@@ -50,19 +50,21 @@ Every Amazon requirement. One platform. Full circle.
 
 ---
 
-## SLIDE 4: 9 Features Built in 48 Hours
+## SLIDE 4: 11 Features Built in 48 Hours
 
 | # | Feature | What It Does |
 |---|---------|-------------|
 | 1 | **AI Grading Engine** | Amazon Nova grades items A/B/C/D in <2 seconds |
 | 2 | **Product Health Card** | Trust breakdown: cosmetic, functional, packaging scores |
-| 3 | **Shop Certified Refurbished** | Browse AI-graded inventory, save 35% vs new |
+| 3 | **Shop Certified Refurbished** | Browse AI-graded inventory with real pricing |
 | 4 | **Return History Dashboard** | Full audit trail with expandable detail rows |
 | 5 | **Check Before You Buy** | Pre-purchase risk assessment prevents returns |
 | 6 | **Green Credits Wallet** | Per-user persistent rewards for sustainable routing |
 | 7 | **User Identity** | No login needed — name-based tracking via localStorage |
 | 8 | **Seller Bulk Upload** | CSV → batch AI grading with live progress |
 | 9 | **P2P Real-time Chat** | WebSocket negotiation between buyer and seller |
+| 10 | **Smart Condition Dropdowns** | Category-specific options + auto-fill image labels |
+| 11 | **AI Resell Price Suggestion** | Grade-based pricing: A=80%, B=60%, C=30%, D=0% |
 
 ---
 

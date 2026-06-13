@@ -127,6 +127,22 @@ One platform. Full circle. Every item finds its highest-value second life.
 - Connection status indicator
 - Accessible from Shop page via "Chat with Seller" button
 
+### 10. Smart Condition Dropdowns
+- Category-specific condition options replace free-text input
+- Electronics: Fully functional, Minor scratches, Screen cracked, Battery issues, Water damage
+- Clothing: Good condition, Faded, Missing buttons, Torn, Stains
+- Books: Good condition, Highlighted, Torn pages, Cover damaged
+- Home: Light wear, Missing pieces, Motor broken, Shattered/Destroyed
+- **Auto-fill image labels** based on selected condition (e.g. "Screen cracked" → `cracked_screen`)
+- Reduces user input errors and standardizes grading inputs
+
+### 11. AI Resell Price Suggestion
+- User enters original product price (₹) in the evaluate form
+- AI calculates suggested resell price based on grade: A=80%, B=60%, C=30%, D=0%
+- `suggested_price` stored in DynamoDB and returned in API response
+- ResultPage shows "Suggested Resell Price: ₹X" in a prominent green badge with savings %
+- ShopPage product cards display actual price + savings percentage vs new
+
 ---
 
 ## Amazon Problem Statement Coverage
@@ -137,7 +153,7 @@ One platform. Full circle. Every item finds its highest-value second life.
 | Smart quality grading | **Product Health Card** | Trust breakdown across cosmetic, functional, packaging |
 | Personalized refurb recommendations | **Shop Certified Refurbished** | Browse AI-graded inventory by category with trust scores |
 | Sustainable incentives | **Green Credits Wallet** | Per-user credits earned for sustainable routing choices |
-| Easy P2P resale | **Real-time Chat** | WebSocket negotiation between buyer and seller on Resell items |
+| Easy P2P resale | **Real-time Chat + Price Suggestion** | WebSocket negotiation + AI-suggested fair pricing |
 | Predictive return prevention | **Check Before You Buy** | Pre-purchase risk assessment nudges toward refurbished |
 
 ---
@@ -225,9 +241,10 @@ One platform. Full circle. Every item finds its highest-value second life.
 {
   "item_id": "ITEM-001",
   "category": "Electronics",
-  "condition_notes": "Minor scratches on back, fully functional",
-  "simulated_image_label": "scratched_phone_back",
-  "user_id": "kavya"
+  "condition_notes": "Minor scratches",
+  "simulated_image_label": "light_scratches",
+  "user_id": "kavya",
+  "original_price": 2999
 }
 ```
 
@@ -246,6 +263,8 @@ One platform. Full circle. Every item finds its highest-value second life.
     "packaging": 0.78
   },
   "green_credits": 30,
+  "original_price": 2999,
+  "suggested_price": 1799,
   "timestamp": "2026-06-13T10:30:00+00:00"
 }
 ```
