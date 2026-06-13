@@ -100,7 +100,7 @@ function App() {
 
       {/* Pages */}
       <main className="pt-20">
-        {page === 'home' && <HomePage onNavigate={() => setPage('evaluate')} />}
+        {page === 'home' && <HomePage onNavigate={() => setPage('evaluate')} onNavigateShop={() => setPage('shop')} />}
         {page === 'evaluate' && <EvaluatePage onSubmit={handleEvaluate} loading={loading} />}
         {page === 'result' && result && (
           <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} />
