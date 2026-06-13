@@ -11,9 +11,10 @@ const GRADE_COLORS = {
   D: '#C94A3A',
 }
 
-function ProductCard({ item }) {
+function ProductCard({ item, onChatWithSeller }) {
   const gradeColor = GRADE_COLORS[item.grade] || '#5B8FA8'
   const confidence = Math.round((item.confidence_score || item.condition_score || 0) * 100)
+  const route = item.assigned_route || item.route_decision || ''
 
   return (
     <div className="bg-white border border-charcoal/6 rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -70,15 +71,25 @@ function ProductCard({ item }) {
         </span>
       </div>
 
-      {/* Add to cart */}
-      <button className="w-full py-3 bg-sage text-white font-sans text-sm font-medium rounded-lg hover:bg-sage/90 transition-colors">
-        Add to Cart
-      </button>
+      {/* Buttons */}
+      <div className="space-y-2">
+        <button className="w-full py-3 bg-sage text-white font-sans text-sm font-medium rounded-lg hover:bg-sage/90 transition-colors">
+          Add to Cart
+        </button>
+        {route === 'Resell' && onChatWithSeller && (
+          <button
+            onClick={() => onChatWithSeller(item.item_id)}
+            className="w-full py-3 border border-terracotta/30 text-terracotta font-sans text-sm font-medium rounded-lg hover:bg-terracotta/5 transition-colors"
+          >
+            💬 Chat with Seller
+          </button>
+        )}
+      </div>
     </div>
   )
 }
 
-function ShopPage() {
+function ShopPage({ onChatWithSeller }) {
   const [category, setCategory] = useState('')
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
@@ -186,7 +197,7 @@ function ShopPage() {
       {items.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
           {items.map((item) => (
-            <ProductCard key={item.item_id} item={item} />
+            <ProductCard key={item.item_id} item={item} onChatWithSeller={onChatWithSeller} />
           ))}
         </div>
       )}

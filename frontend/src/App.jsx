@@ -26,6 +26,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [walletCredits, setWalletCredits] = useState(0)
+  const [autoOpenChat, setAutoOpenChat] = useState(false)
 
   // Fetch wallet balance
   const fetchWallet = async (uid) => {
@@ -95,6 +96,24 @@ function App() {
     }
   }
 
+  const handleChatWithSeller = async (itemId) => {
+    setLoading(true)
+    setError(null)
+    setAutoOpenChat(true)
+    try {
+      const response = await fetch(`${API_BASE}/health-card/${itemId}`)
+      if (!response.ok) throw new Error(`Request failed (${response.status})`)
+      const data = await response.json()
+      setResult(data)
+      setPage('result')
+    } catch (err) {
+      setError(err.message)
+      setAutoOpenChat(false)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Show welcome modal if no user_id
   if (!userId) {
     return <WelcomeModal onSubmit={handleWelcomeSubmit} />
@@ -106,7 +125,7 @@ function App() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-between">
           <button
-            onClick={() => { setPage('home'); setResult(null); setError(null) }}
+            onClick={() => { setPage('home'); setResult(null); setError(null); setAutoOpenChat(false) }}
             className="font-serif text-xl font-bold text-charcoal tracking-tight hover:text-terracotta transition-colors"
           >
             ReBridge
@@ -150,7 +169,7 @@ function App() {
             </button>
             {page !== 'home' && (
               <button
-                onClick={() => { setPage('home'); setResult(null); setError(null) }}
+                onClick={() => { setPage('home'); setResult(null); setError(null); setAutoOpenChat(false) }}
                 className="text-xs font-sans uppercase tracking-[0.2em] text-charcoal/50 hover:text-terracotta transition-colors"
               >
                 ← Home
@@ -175,9 +194,9 @@ function App() {
         {page === 'home' && <HomePage onNavigate={() => setPage('evaluate')} onNavigateShop={() => setPage('shop')} />}
         {page === 'evaluate' && <EvaluatePage onSubmit={handleEvaluate} loading={loading} />}
         {page === 'result' && result && (
-          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} />
+          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} autoOpenChat={autoOpenChat} />
         )}
-        {page === 'shop' && <ShopPage />}
+        {page === 'shop' && <ShopPage onChatWithSeller={handleChatWithSeller} />}
         {page === 'history' && <HistoryPage />}
         {page === 'seller' && <SellerPortal />}
       </main>

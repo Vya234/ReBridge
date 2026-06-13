@@ -1,3 +1,6 @@
+import { useState, useEffect } from 'react'
+import ChatPortal from './ChatPortal'
+
 const GRADE_CONFIG = {
   A: { color: '#7C9E87', label: 'Excellent', ring: 'ring-sage' },
   B: { color: '#5B8FA8', label: 'Good', ring: 'ring-blue-400' },
@@ -74,11 +77,19 @@ function TrustBar({ label, value, delay = 0 }) {
   )
 }
 
-function ResultPage({ result, onViewHealthCard, loading }) {
+function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
+  const [chatOpen, setChatOpen] = useState(false)
   const grade = result.grade || 'A'
   const config = GRADE_CONFIG[grade] || GRADE_CONFIG.A
   const route = result.assigned_route || result.route_decision || 'Resell'
   const confidence = Math.round((result.confidence_score || result.condition_score || 0) * 100)
+
+  // Auto-open chat if requested and route is Resell
+  useEffect(() => {
+    if (autoOpenChat && route === 'Resell') {
+      setChatOpen(true)
+    }
+  }, [autoOpenChat, route])
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -189,20 +200,30 @@ function ResultPage({ result, onViewHealthCard, loading }) {
 
       {/* Footer actions */}
       <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <button
-          onClick={() => onViewHealthCard(result.item_id)}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-6 py-3 border border-charcoal/15 text-charcoal/70 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta disabled:opacity-40 transition-all duration-300"
-        >
-          {loading ? (
-            <>
-              <span className="inline-block w-3 h-3 border-2 border-charcoal/20 border-t-charcoal rounded-full animate-spin"></span>
-              Loading
-            </>
-          ) : (
-            <>↻ Refresh Health Card</>
+        <div className="flex gap-3">
+          <button
+            onClick={() => onViewHealthCard(result.item_id)}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-6 py-3 border border-charcoal/15 text-charcoal/70 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta disabled:opacity-40 transition-all duration-300"
+          >
+            {loading ? (
+              <>
+                <span className="inline-block w-3 h-3 border-2 border-charcoal/20 border-t-charcoal rounded-full animate-spin"></span>
+                Loading
+              </>
+            ) : (
+              <>↻ Refresh Health Card</>
+            )}
+          </button>
+          {route === 'Resell' && (
+            <button
+              onClick={() => setChatOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-sage text-white font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:bg-sage/90 transition-colors"
+            >
+              🤝 Negotiate with Buyer
+            </button>
           )}
-        </button>
+        </div>
 
         {result.timestamp && (
           <span className="text-[11px] font-sans text-charcoal/30 tracking-wide">
@@ -212,6 +233,15 @@ function ResultPage({ result, onViewHealthCard, loading }) {
           </span>
         )}
       </div>
+
+      {/* Chat Portal */}
+      {chatOpen && (
+        <ChatPortal
+          itemId={result.item_id}
+          itemSummary={`${result.item_id} • Grade ${grade} • ${route}`}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   )
 }

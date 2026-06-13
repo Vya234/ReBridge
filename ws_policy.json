@@ -1,0 +1,10 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "execute-api:ManageConnections",
+      "Resource": "arn:aws:execute-api:ap-south-1:009164981620:kvhtc0th50/*"
+    }
+  ]
+}
