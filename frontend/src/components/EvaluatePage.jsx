@@ -1,6 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const CATEGORIES = ['Electronics', 'Clothing', 'Books', 'Home']
+
+const CONDITION_OPTIONS = {
+  Electronics: ['Fully functional', 'Minor scratches', 'Screen cracked', 'Battery issues', 'Water damage'],
+  Clothing: ['Good condition', 'Faded', 'Missing buttons', 'Torn', 'Stains'],
+  Books: ['Good condition', 'Highlighted', 'Torn pages', 'Cover damaged'],
+  Home: ['Light wear', 'Missing pieces', 'Motor broken', 'Shattered/Destroyed'],
+}
+
+const IMAGE_LABEL_MAP = {
+  'Fully functional': 'good_condition',
+  'Minor scratches': 'light_scratches',
+  'Screen cracked': 'cracked_screen',
+  'Battery issues': 'battery_damaged',
+  'Water damage': 'water_damaged',
+  'Good condition': 'good_condition',
+  'Faded': 'faded_item',
+  'Missing buttons': 'missing_parts',
+  'Torn': 'torn_item',
+  'Stains': 'stained_item',
+  'Highlighted': 'highlighted_book',
+  'Torn pages': 'torn_pages',
+  'Cover damaged': 'damaged_cover',
+  'Light wear': 'light_wear',
+  'Missing pieces': 'missing_parts',
+  'Motor broken': 'broken_motor',
+  'Shattered/Destroyed': 'shattered_item',
+}
 
 function EvaluatePage({ onSubmit, loading }) {
   const [formData, setFormData] = useState({
@@ -8,15 +35,36 @@ function EvaluatePage({ onSubmit, loading }) {
     category: '',
     condition_notes: '',
     simulated_image_label: '',
+    original_price: '',
   })
 
+  const conditions = formData.category ? CONDITION_OPTIONS[formData.category] || [] : []
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    const updated = { ...formData, [name]: value }
+
+    // Reset condition when category changes
+    if (name === 'category') {
+      updated.condition_notes = ''
+      updated.simulated_image_label = ''
+    }
+
+    // Auto-fill image label when condition is selected
+    if (name === 'condition_notes') {
+      updated.simulated_image_label = IMAGE_LABEL_MAP[value] || ''
+    }
+
+    setFormData(updated)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSubmit(formData)
+    const payload = {
+      ...formData,
+      original_price: formData.original_price ? parseInt(formData.original_price, 10) : 0,
+    }
+    onSubmit(payload)
   }
 
   const isValid = formData.item_id && formData.category && formData.condition_notes && formData.simulated_image_label
@@ -82,33 +130,53 @@ function EvaluatePage({ onSubmit, loading }) {
               </select>
             </div>
 
-            {/* Condition Notes */}
+            {/* Condition — Dynamic Dropdown */}
             <div>
               <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
-                Condition Notes
+                Condition
               </label>
-              <textarea
+              <select
                 name="condition_notes"
                 value={formData.condition_notes}
                 onChange={handleChange}
-                rows={3}
-                placeholder="Describe visible wear, damage, or defects..."
-                className="input-editorial resize-none"
-              />
+                disabled={!formData.category}
+                className="input-editorial cursor-pointer appearance-none disabled:opacity-40 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%231C1C1C%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0_center]"
+              >
+                <option value="">{formData.category ? 'Select condition' : 'Select a category first'}</option>
+                {conditions.map((cond) => (
+                  <option key={cond} value={cond}>{cond}</option>
+                ))}
+              </select>
             </div>
 
-            {/* Image Label */}
+            {/* Image Label (auto-filled, editable) */}
             <div>
               <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
-                Image Label (Simulated)
+                Image Label (Auto-filled)
               </label>
               <input
                 type="text"
                 name="simulated_image_label"
                 value={formData.simulated_image_label}
                 onChange={handleChange}
-                placeholder="e.g. scratched_phone_back"
-                className="input-editorial"
+                placeholder="Auto-fills from condition"
+                className="input-editorial font-mono text-charcoal/60"
+              />
+            </div>
+
+            {/* Original Price */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Original Price (₹)
+              </label>
+              <input
+                type="number"
+                name="original_price"
+                value={formData.original_price}
+                onChange={handleChange}
+                placeholder="e.g. 2999"
+                min="0"
+                className="input-editorial font-mono"
               />
             </div>
 

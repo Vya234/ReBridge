@@ -108,6 +108,7 @@ def lambda_handler(event, context):
         condition_notes = body["condition_notes"]
         simulated_image_label = body["simulated_image_label"]
         user_id = body.get("user_id", DEFAULT_USER)
+        original_price = body.get("original_price", 0)
 
         # Call Nova for grading
         prompt = build_prompt(category, condition_notes, simulated_image_label)
@@ -117,17 +118,24 @@ def lambda_handler(event, context):
         route = ai_result["route_decision"]
         credits_earned = GREEN_CREDITS.get(route, 0)
 
+        # Calculate suggested resell price based on grade
+        grade = ai_result["grade"]
+        price_multiplier = {"A": 0.80, "B": 0.60, "C": 0.30, "D": 0.0}
+        suggested_price = int(original_price * price_multiplier.get(grade, 0))
+
         # Build full record
         record = {
             "item_id": item_id,
             "category": category,
             "condition_score": ai_result.get("confidence_score", 0.0),
-            "grade": ai_result["grade"],
+            "grade": grade,
             "condition_summary": ai_result["condition_summary"],
             "assigned_route": route,
             "confidence_score": ai_result["confidence_score"],
             "trust_breakdown": ai_result["trust_breakdown"],
             "green_credits": credits_earned,
+            "original_price": original_price,
+            "suggested_price": suggested_price,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 

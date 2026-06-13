@@ -27,7 +27,9 @@ function ProductCard({ item, onChatWithSeller }) {
           {item.grade}
         </div>
         <span className="px-3 py-1 bg-sage-light text-sage text-xs font-sans font-medium rounded-full">
-          Save 35% vs new
+          {item.suggested_price > 0
+            ? `₹${item.suggested_price} • Save ${item.original_price > 0 ? Math.round((1 - item.suggested_price / item.original_price) * 100) : 35}%`
+            : 'Save 35% vs new'}
         </span>
       </div>
 

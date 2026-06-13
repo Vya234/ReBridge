@@ -183,6 +183,23 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
           </div>
         </div>
 
+        {/* Suggested Price */}
+        {result.suggested_price > 0 && (
+          <div className="p-8 md:p-12 border-b border-charcoal/5">
+            <div className="flex items-center gap-4">
+              <div className="px-5 py-3 bg-sage-light border border-sage/20 rounded-xl">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-sage/70 font-sans mb-1">Suggested Resell Price</p>
+                <p className="font-serif text-3xl font-bold text-sage">₹{result.suggested_price}</p>
+                {result.original_price > 0 && (
+                  <p className="text-[11px] font-sans text-sage/60 mt-1">
+                    Save {Math.round((1 - result.suggested_price / result.original_price) * 100)}% vs ₹{result.original_price} new
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Bottom section: trust breakdown */}
         {result.trust_breakdown && (
           <div className="p-8 md:p-12">
