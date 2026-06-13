@@ -291,7 +291,7 @@ aws s3 sync dist/ s3://rebridge-app-2026 --delete
 |---|---|
 | **Event** | Amazon HackOn Season 6 |
 | **Theme** | Second Life Commerce |
-| **Team** | Kavya Rai |
+| **Team** | lazyBot (Kavya Rai, Oindrila Singha) |
 | **Timeline** | Built in 48 hours |
 | **Dev Approach** | Spec-driven development using Kiro IDE |
 

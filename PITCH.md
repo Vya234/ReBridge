@@ -9,7 +9,7 @@
 **ReBridge** — AI-Powered Returns Routing & Sustainable Resale Platform
 
 🏆 Amazon HackOn Season 6 | Theme: Second Life Commerce  
-👤 Team: Kavya Rai
+👤 Team: lazyBot (Kavya Rai, Oindrila Singha)
 
 ---
 
