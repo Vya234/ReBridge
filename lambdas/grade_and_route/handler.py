@@ -18,8 +18,19 @@ import db_client
 
 REGION = "ap-south-1"
 MODEL_ID = "apac.amazon.nova-micro-v1:0"
+WALLET_TABLE = "GreenWallet"
+DEFAULT_USER = "default_user"
+
+GREEN_CREDITS = {
+    "Donate": 50,
+    "Refurbish": 30,
+    "Resell": 20,
+    "Recycle": 10,
+}
 
 bedrock = boto3.client("bedrock-runtime", region_name=REGION)
+dynamodb = boto3.resource("dynamodb", region_name=REGION)
+wallet_table = dynamodb.Table(WALLET_TABLE)
 
 
 def build_prompt(category: str, condition_notes: str, simulated_image_label: str) -> str:
@@ -96,10 +107,15 @@ def lambda_handler(event, context):
         category = body["category"]
         condition_notes = body["condition_notes"]
         simulated_image_label = body["simulated_image_label"]
+        user_id = body.get("user_id", DEFAULT_USER)
 
         # Call Nova for grading
         prompt = build_prompt(category, condition_notes, simulated_image_label)
         ai_result = invoke_nova(prompt)
+
+        # Calculate green credits
+        route = ai_result["route_decision"]
+        credits_earned = GREEN_CREDITS.get(route, 0)
 
         # Build full record
         record = {
@@ -108,14 +124,28 @@ def lambda_handler(event, context):
             "condition_score": ai_result.get("confidence_score", 0.0),
             "grade": ai_result["grade"],
             "condition_summary": ai_result["condition_summary"],
-            "assigned_route": ai_result["route_decision"],
+            "assigned_route": route,
             "confidence_score": ai_result["confidence_score"],
             "trust_breakdown": ai_result["trust_breakdown"],
+            "green_credits": credits_earned,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
         # Write to DynamoDB
         db_client.put_item(record)
+
+        # Update Green Wallet
+        try:
+            wallet_table.update_item(
+                Key={"user_id": user_id},
+                UpdateExpression="SET total_credits = if_not_exists(total_credits, :zero) + :credits",
+                ExpressionAttributeValues={
+                    ":credits": credits_earned,
+                    ":zero": 0,
+                },
+            )
+        except Exception:
+            pass  # Non-critical — don't fail the request if wallet update fails
 
         return {
             "statusCode": 200,

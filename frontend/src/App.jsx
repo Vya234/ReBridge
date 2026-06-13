@@ -1,17 +1,62 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import HomePage from './components/HomePage'
 import EvaluatePage from './components/EvaluatePage'
 import ResultPage from './components/ResultPage'
 import ShopPage from './components/ShopPage'
 import HistoryPage from './components/HistoryPage'
+import WelcomeModal from './components/WelcomeModal'
 
 const API_BASE = 'https://s3r8aqjg75.execute-api.ap-south-1.amazonaws.com'
 
+function getStoredUserId() {
+  return localStorage.getItem('rebridge_user_id') || null
+}
+
+function saveUserId(name) {
+  const userId = name.trim().toLowerCase().replace(/\s+/g, '_')
+  localStorage.setItem('rebridge_user_id', userId)
+  return userId
+}
+
 function App() {
+  const [userId, setUserId] = useState(getStoredUserId)
   const [page, setPage] = useState('home')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [walletCredits, setWalletCredits] = useState(0)
+
+  // Fetch wallet balance
+  const fetchWallet = async (uid) => {
+    const id = uid || userId
+    if (!id) return
+    try {
+      const res = await fetch(`${API_BASE}/wallet/${id}`)
+      if (res.ok) {
+        const data = await res.json()
+        setWalletCredits(data.total_credits || 0)
+      }
+    } catch {
+      // Silent fail
+    }
+  }
+
+  useEffect(() => {
+    if (userId) fetchWallet()
+  }, [userId])
+
+  const handleWelcomeSubmit = (name) => {
+    const id = saveUserId(name)
+    setUserId(id)
+  }
+
+  const handleSwitchUser = () => {
+    localStorage.removeItem('rebridge_user_id')
+    setUserId(null)
+    setWalletCredits(0)
+    setPage('home')
+    setResult(null)
+  }
 
   const handleEvaluate = async (formData) => {
     setLoading(true)
@@ -20,12 +65,13 @@ function App() {
       const response = await fetch(`${API_BASE}/evaluate-return`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, user_id: userId }),
       })
       if (!response.ok) throw new Error(`Request failed (${response.status})`)
       const data = await response.json()
       setResult(data)
       setPage('result')
+      fetchWallet()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -48,6 +94,11 @@ function App() {
     }
   }
 
+  // Show welcome modal if no user_id
+  if (!userId) {
+    return <WelcomeModal onSubmit={handleWelcomeSubmit} />
+  }
+
   return (
     <div className="min-h-screen bg-cream">
       {/* Navbar */}
@@ -59,7 +110,11 @@ function App() {
           >
             ReBridge
           </button>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-5">
+            {/* Green Wallet */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sage-light border border-sage/20 rounded-full text-xs font-sans font-medium text-sage">
+              🌱 {walletCredits} credits
+            </span>
             <button
               onClick={() => setPage('shop')}
               className={`text-xs font-sans uppercase tracking-[0.2em] transition-colors ${
@@ -75,6 +130,14 @@ function App() {
               }`}
             >
               History
+            </button>
+            {/* Switch User */}
+            <button
+              onClick={handleSwitchUser}
+              className="text-[10px] font-sans text-charcoal/30 hover:text-terracotta transition-colors"
+              title="Switch user identity"
+            >
+              ↺ {userId}
             </button>
             {page !== 'home' && (
               <button

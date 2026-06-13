@@ -7,6 +7,13 @@ const GRADE_CONFIG = {
 
 const ROUTES = ['Resell', 'Refurbish', 'Donate', 'Recycle']
 
+const GREEN_CREDITS = {
+  Donate: 50,
+  Refurbish: 30,
+  Resell: 20,
+  Recycle: 10,
+}
+
 function JourneyTracker({ currentRoute }) {
   const activeIndex = ROUTES.indexOf(currentRoute)
 
@@ -85,6 +92,27 @@ function ResultPage({ result, onViewHealthCard, loading }) {
           <span className="pill">{result.category}</span>
         </div>
       </div>
+
+      {/* Green Credits Celebration */}
+      {result.green_credits > 0 && (
+        <div className="mb-6 animate-slide-up">
+          <div className="relative overflow-hidden px-6 py-4 bg-sage-light border border-sage/20 rounded-xl flex items-center gap-4">
+            {/* Burst background */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-1/2 left-8 -translate-y-1/2 w-16 h-16 bg-sage rounded-full animate-ping"></div>
+            </div>
+            <span className="relative text-3xl">🌱</span>
+            <div className="relative">
+              <p className="font-serif text-xl font-bold text-sage">
+                +{result.green_credits} Green Credits Earned!
+              </p>
+              <p className="font-sans text-xs text-sage/70 mt-0.5">
+                Thank you for choosing a sustainable route
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main card — looks like a certificate/tag */}
       <div className="animate-slide-up bg-white border border-charcoal/8 rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(28,28,28,0.08)]">
