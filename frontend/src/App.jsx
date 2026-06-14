@@ -31,6 +31,7 @@ function App() {
   const [autoOpenChat, setAutoOpenChat] = useState(false)
   const [prefillItemId, setPrefillItemId] = useState('')
   const [previousGrade, setPreviousGrade] = useState(null)
+  const [submittedImage, setSubmittedImage] = useState(null)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
 
   // Fetch wallet balance
@@ -101,11 +102,17 @@ function App() {
     }
 
     try {
-      const { _isReeval, ...submitData } = formData
+      const { _isReeval, image_bytes, ...submitData } = formData
+      // Store image for display on result page
+      if (image_bytes) {
+        setSubmittedImage(`data:image/jpeg;base64,${image_bytes}`)
+      } else {
+        setSubmittedImage(null)
+      }
       const response = await fetch(`${API_BASE}/evaluate-return`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...submitData, user_id: userId }),
+        body: JSON.stringify({ ...submitData, image_bytes, user_id: userId }),
       })
       if (!response.ok) throw new Error(`Request failed (${response.status})`)
       const data = await response.json()
@@ -251,7 +258,7 @@ function App() {
         {page === 'home' && <HomePage onNavigate={() => setPage('evaluate')} onNavigateShop={() => setPage('shop')} />}
         {page === 'evaluate' && <EvaluatePage onSubmit={handleEvaluate} loading={loading} prefillItemId={prefillItemId} />}
         {page === 'result' && result && (
-          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} autoOpenChat={autoOpenChat} previousGrade={previousGrade} />
+          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} autoOpenChat={autoOpenChat} previousGrade={previousGrade} submittedImage={submittedImage} />
         )}
         {page === 'shop' && <ShopPage onChatWithSeller={handleChatWithSeller} />}
         {page === 'history' && <HistoryPage onReeval={(itemId) => { setPrefillItemId(itemId); setPage('evaluate') }} />}

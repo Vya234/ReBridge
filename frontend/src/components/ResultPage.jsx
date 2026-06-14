@@ -78,7 +78,7 @@ function TrustBar({ label, value, delay = 0 }) {
   )
 }
 
-function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousGrade }) {
+function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousGrade, submittedImage }) {
   const [chatOpen, setChatOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [idCopied, setIdCopied] = useState(false)
@@ -165,6 +165,23 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
 
       {/* Main card — looks like a certificate/tag */}
       <div className="animate-slide-up bg-white border border-charcoal/8 rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(28,28,28,0.08)]">
+
+        {/* Submitted Photo */}
+        {submittedImage && (
+          <div className="relative border-b border-charcoal/5">
+            <p className="absolute top-4 left-6 text-[9px] uppercase tracking-[0.2em] text-white/70 font-sans z-10">
+              Submitted Photo
+            </p>
+            <img
+              src={submittedImage}
+              alt="Submitted product"
+              className="w-full max-h-[250px] object-cover"
+            />
+            <span className="absolute bottom-3 right-4 px-3 py-1.5 bg-charcoal/70 backdrop-blur-sm text-white text-[10px] font-sans rounded-full">
+              📸 AI Vision Analyzed
+            </span>
+          </div>
+        )}
 
         {/* Top section: grade stamp + route */}
         <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-12 gap-10 items-center border-b border-charcoal/5">
