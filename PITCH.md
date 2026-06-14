@@ -40,11 +40,11 @@ Return → AI grades in 2 sec → Smart routing → Health Card + Price
       → Green Credits earned → Risk check prevents next return
 ```
 
-Every Amazon requirement. One platform. 17 features. Full circle.
+Every Amazon requirement. One platform. 18 features. Full circle.
 
 ---
 
-## SLIDE 4: 17 Features Built in 48 Hours
+## SLIDE 4: 18 Features Built in 48 Hours
 
 | # | Feature | What It Does |
 |---|---------|-------------|
@@ -65,6 +65,7 @@ Every Amazon requirement. One platform. 17 features. Full circle.
 | 15 | **Smart Identity** | No login needed + duplicate name detection |
 | 16 | **QR + Share** | Scannable QR deep-links to any health card |
 | 17 | **Bulk Upload** | CSV → batch AI grading with progress + CSV export |
+| 18 | **Location Discovery** | City/Locality filter connects buyers to nearby sellers |
 
 ---
 
@@ -113,7 +114,9 @@ Every Amazon requirement. One platform. 17 features. Full circle.
 | 6 | **Green Credits** — watch wallet grow with each evaluation |
 | 7 | **Prevention** — check return risk before buying |
 
-**Built in 48 hours. 17 features. 9 Lambda functions. 3 DynamoDB tables. Fully deployed on AWS. Ready to scale.**
+**Built in 48 hours. 18 features. 9 Lambda functions. 3 DynamoDB tables. Fully deployed on AWS. Ready to scale.**
+
+**Next:** Geo-Intelligent Local Exchange — radius filtering, haversine ranking, carbon savings, community pickup hubs.
 
 ---
 

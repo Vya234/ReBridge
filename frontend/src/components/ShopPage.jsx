@@ -66,12 +66,22 @@ function ProductCard({ item, onChatWithSeller }) {
       )}
 
       {/* Route badge */}
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex items-center gap-2 mb-3">
         <span className="text-[10px] uppercase tracking-[0.15em] text-charcoal/40 font-sans">Certified</span>
         <span className="px-2 py-0.5 bg-terracotta/10 text-terracotta text-[11px] font-sans font-medium rounded">
           {item.assigned_route || item.route_decision}
         </span>
       </div>
+
+      {/* Location tag */}
+      {item.city && (
+        <div className="flex items-center gap-1 mb-5">
+          <span className="text-[10px] text-charcoal/35 font-sans">📍</span>
+          <span className="text-[10px] text-charcoal/40 font-sans">
+            {item.locality ? `${item.locality}, ${item.city}` : item.city}
+          </span>
+        </div>
+      )}
 
       {/* Buttons */}
       <div className="space-y-2">
@@ -99,6 +109,11 @@ function ShopPage({ onChatWithSeller }) {
   const [nlQuery, setNlQuery] = useState('')
   const [nlSearching, setNlSearching] = useState(false)
   const [nlSearched, setNlSearched] = useState(false)
+  const [cityFilter, setCityFilter] = useState('')
+
+  const displayItems = cityFilter.trim()
+    ? items.filter(item => (item.city || '').toLowerCase().includes(cityFilter.trim().toLowerCase()))
+    : items
 
   const handleNlSearch = async (e) => {
     e.preventDefault()
@@ -232,21 +247,32 @@ function ShopPage({ onChatWithSeller }) {
         </div>
       </div>
 
+      {/* City Filter */}
+      <div className="mb-6">
+        <input
+          type="text"
+          value={cityFilter}
+          onChange={(e) => setCityFilter(e.target.value)}
+          placeholder="Filter by city... e.g. Mumbai"
+          className="max-w-xs px-4 py-2.5 bg-white border border-charcoal/10 rounded-full font-sans text-xs text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
+        />
+      </div>
+
       {/* NL Search Results */}
-      {nlSearched && !nlSearching && items.length === 0 && (
+      {nlSearched && !nlSearching && displayItems.length === 0 && (
         <div className="text-center py-10 mb-8 border-b border-charcoal/5">
           <p className="font-serif text-xl text-charcoal/30 italic">No items match your search</p>
           <p className="font-sans text-sm text-charcoal/40 mt-2">Try browsing by category below</p>
         </div>
       )}
 
-      {nlSearched && !nlSearching && items.length > 0 && (
+      {nlSearched && !nlSearching && displayItems.length > 0 && (
         <div className="mb-12">
           <p className="font-sans text-xs text-charcoal/40 uppercase tracking-[0.15em] mb-4">
-            {items.length} result{items.length !== 1 ? 's' : ''} found
+            {displayItems.length} result{displayItems.length !== 1 ? 's' : ''} found
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {items.map((item) => (
+            {displayItems.map((item) => (
               <ProductCard key={item.item_id} item={item} onChatWithSeller={onChatWithSeller} />
             ))}
           </div>
@@ -295,9 +321,9 @@ function ShopPage({ onChatWithSeller }) {
         </div>
       )}
 
-      {items.length > 0 && !nlSearched && (
+      {displayItems.length > 0 && !nlSearched && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-          {items.map((item) => (
+          {displayItems.map((item) => (
             <ProductCard key={item.item_id} item={item} onChatWithSeller={onChatWithSeller} />
           ))}
         </div>

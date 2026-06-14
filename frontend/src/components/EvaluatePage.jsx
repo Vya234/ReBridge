@@ -65,6 +65,8 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     return_reason: '',
     warranty_left: '',
     repair_history: '',
+    city: '',
+    locality: '',
   })
   const [isReeval, setIsReeval] = useState(!!prefillItemId)
 
@@ -108,13 +110,15 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
       return_reason: formData.return_reason,
       warranty_left: formData.warranty_left,
       repair_history: formData.repair_history,
+      city: formData.city,
+      locality: formData.locality,
       _isReeval: isReeval && formData.item_id ? true : false,
     }
     onSubmit(payload)
   }
 
   const conditionFilled = isOtherCondition ? formData.custom_condition.trim() : formData.condition_notes
-  const isValid = formData.category && conditionFilled && formData.simulated_image_label
+  const isValid = formData.category && conditionFilled && formData.simulated_image_label && formData.city.trim()
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -305,6 +309,36 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
                   <option key={r} value={r}>{r}</option>
                 ))}
               </select>
+            </div>
+
+            {/* City */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                City (Required)
+              </label>
+              <input
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="e.g. Mumbai, Delhi, Bangalore"
+                className="input-editorial"
+              />
+            </div>
+
+            {/* Locality */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Locality (Optional)
+              </label>
+              <input
+                type="text"
+                name="locality"
+                value={formData.locality}
+                onChange={handleChange}
+                placeholder="e.g. Andheri West, Koramangala"
+                className="input-editorial"
+              />
             </div>
 
             {/* Divider */}

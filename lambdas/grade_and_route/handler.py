@@ -127,6 +127,8 @@ def lambda_handler(event, context):
         return_reason = body.get("return_reason", "")
         warranty_left = body.get("warranty_left", "")
         repair_history = body.get("repair_history", "")
+        city = body.get("city", "")
+        locality = body.get("locality", "")
 
         # Call Nova for grading
         prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history)
@@ -158,6 +160,8 @@ def lambda_handler(event, context):
             "return_reason": return_reason,
             "warranty_left": warranty_left,
             "repair_history": repair_history,
+            "city": city,
+            "locality": locality,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 

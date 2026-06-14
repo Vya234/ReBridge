@@ -48,7 +48,7 @@ Return initiated
 
 ---
 
-## Features (17)
+## Features (18)
 
 ### Core AI
 
@@ -179,6 +179,23 @@ Return initiated
 - Results table with grade + route as they complete
 - Summary: total items, route breakdown, green credits earned
 - Download results CSV button
+
+#### 18. Location-Based Seller Discovery
+- Sellers optionally provide City (required) and Locality (optional) when submitting a return
+- Buyers can filter Shop and Product Gallery by city (case-insensitive partial match)
+- Matched products display a 📍 Locality, City tag on their card
+- Connects buyers to nearby sellers who can then negotiate via the existing P2P chat
+- No geo libraries needed — lightweight text-based matching
+
+---
+
+## Future Development / Roadmap
+
+- **Geo-Intelligent Local Exchange** — Extend location discovery with coordinates, radius-based filtering (5km/10km/25km), haversine distance ranking, AI routing that factors local demand, carbon emission savings estimates, and community pickup hubs
+- **Image Upload** — Real visual grading via Amazon Rekognition
+- **Seller Analytics Dashboard** — Return patterns, grade distribution, revenue insights
+- **Green Credits Redemption** — Redeem credits for discounts or donate to environmental causes
+- **Multi-language Support** — Expand trust cards to global marketplaces
 
 ---
 

@@ -21,6 +21,7 @@ function HistoryPage({ onReeval }) {
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [cityFilter, setCityFilter] = useState('')
 
   useEffect(() => {
     fetchAllItems()
@@ -93,6 +94,11 @@ function HistoryPage({ onReeval }) {
     })
   })()
 
+  // Apply city filter on top of search filter
+  const cityFilteredItems = cityFilter.trim()
+    ? filteredItems.filter(item => (item.city || '').toLowerCase().includes(cityFilter.trim().toLowerCase()))
+    : filteredItems
+
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
       {/* Header */}
@@ -141,10 +147,23 @@ function HistoryPage({ onReeval }) {
         </div>
       )}
 
+      {/* City filter */}
+      {!loading && items.length > 0 && (
+        <div className="mb-4">
+          <input
+            type="text"
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+            placeholder="Filter by city... e.g. Mumbai"
+            className="max-w-xs px-4 py-2.5 bg-white border border-charcoal/10 rounded-full font-sans text-xs text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
+          />
+        </div>
+      )}
+
       {/* Filter result count */}
-      {searchQuery.trim() && !loading && (
+      {(searchQuery.trim() || cityFilter.trim()) && !loading && (
         <p className="mb-4 font-sans text-xs text-charcoal/50">
-          {filteredItems.length} result{filteredItems.length !== 1 ? 's' : ''} for "{searchQuery}"
+          {cityFilteredItems.length} result{cityFilteredItems.length !== 1 ? 's' : ''}{searchQuery.trim() ? ` for "${searchQuery}"` : ''}{cityFilter.trim() ? ` in "${cityFilter}"` : ''}
         </p>
       )}
 
@@ -178,7 +197,7 @@ function HistoryPage({ onReeval }) {
           </div>
 
           {/* Rows */}
-          {filteredItems.map((item) => {
+          {cityFilteredItems.map((item) => {
             const grade = item.grade || '—'
             const gradeStyle = GRADE_STYLES[grade] || { bg: 'bg-gray-100', text: 'text-gray-500', border: 'border-gray-200' }
             const route = item.assigned_route || item.route_decision || '—'
@@ -313,7 +332,7 @@ function HistoryPage({ onReeval }) {
       {/* Item count */}
       {!loading && items.length > 0 && (
         <p className="mt-4 text-[11px] font-sans text-charcoal/30 tracking-wide">
-          Showing {filteredItems.length} of {items.length} evaluated items
+          Showing {cityFilteredItems.length} of {items.length} evaluated items
         </p>
       )}
     </div>
