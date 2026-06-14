@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const CATEGORIES = ['Electronics', 'Clothing', 'Books', 'Home']
 
 const CONDITION_OPTIONS = {
-  Electronics: ['Fully functional', 'Minor scratches', 'Screen cracked', 'Battery issues', 'Water damage'],
-  Clothing: ['Good condition', 'Faded', 'Missing buttons', 'Torn', 'Stains'],
-  Books: ['Good condition', 'Highlighted', 'Torn pages', 'Cover damaged'],
-  Home: ['Light wear', 'Missing pieces', 'Motor broken', 'Shattered/Destroyed'],
+  Electronics: ['Fully functional', 'Minor scratches', 'Screen cracked', 'Battery issues', 'Water damage', 'Other (describe below)'],
+  Clothing: ['Good condition', 'Faded', 'Missing buttons', 'Torn', 'Stains', 'Other (describe below)'],
+  Books: ['Good condition', 'Highlighted', 'Torn pages', 'Cover damaged', 'Other (describe below)'],
+  Home: ['Light wear', 'Missing pieces', 'Motor broken', 'Shattered/Destroyed', 'Other (describe below)'],
 }
 
 const IMAGE_LABEL_MAP = {
@@ -29,16 +29,46 @@ const IMAGE_LABEL_MAP = {
   'Shattered/Destroyed': 'shattered_item',
 }
 
+const RETURN_REASONS = [
+  'Changed mind',
+  'Defective',
+  'Wrong item',
+  'Not as described',
+  'Better price found',
+  'Gift return',
+  'Other',
+]
+
+const WARRANTY_OPTIONS = [
+  'No warranty',
+  'Less than 3 months',
+  '3-6 months',
+  '6-12 months',
+  'More than 1 year',
+]
+
+const REPAIR_OPTIONS = [
+  'Never repaired',
+  'Repaired once',
+  'Repaired multiple times',
+  'Unknown',
+]
+
 function EvaluatePage({ onSubmit, loading }) {
   const [formData, setFormData] = useState({
     item_id: '',
     category: '',
     condition_notes: '',
+    custom_condition: '',
     simulated_image_label: '',
     original_price: '',
+    return_reason: '',
+    warranty_left: '',
+    repair_history: '',
   })
 
   const conditions = formData.category ? CONDITION_OPTIONS[formData.category] || [] : []
+  const isOtherCondition = formData.condition_notes === 'Other (describe below)'
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -47,12 +77,19 @@ function EvaluatePage({ onSubmit, loading }) {
     // Reset condition when category changes
     if (name === 'category') {
       updated.condition_notes = ''
+      updated.custom_condition = ''
       updated.simulated_image_label = ''
     }
 
     // Auto-fill image label when condition is selected
     if (name === 'condition_notes') {
-      updated.simulated_image_label = IMAGE_LABEL_MAP[value] || ''
+      if (value === 'Other (describe below)') {
+        updated.simulated_image_label = 'custom_condition'
+        updated.custom_condition = ''
+      } else {
+        updated.simulated_image_label = IMAGE_LABEL_MAP[value] || ''
+        updated.custom_condition = ''
+      }
     }
 
     setFormData(updated)
@@ -60,14 +97,22 @@ function EvaluatePage({ onSubmit, loading }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const conditionValue = isOtherCondition ? formData.custom_condition : formData.condition_notes
     const payload = {
-      ...formData,
+      item_id: formData.item_id,
+      category: formData.category,
+      condition_notes: conditionValue,
+      simulated_image_label: formData.simulated_image_label,
       original_price: formData.original_price ? parseInt(formData.original_price, 10) : 0,
+      return_reason: formData.return_reason,
+      warranty_left: formData.warranty_left,
+      repair_history: formData.repair_history,
     }
     onSubmit(payload)
   }
 
-  const isValid = formData.item_id && formData.category && formData.condition_notes && formData.simulated_image_label
+  const conditionFilled = isOtherCondition ? formData.custom_condition.trim() : formData.condition_notes
+  const isValid = formData.item_id && formData.category && conditionFilled && formData.simulated_image_label
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -96,7 +141,7 @@ function EvaluatePage({ onSubmit, loading }) {
 
         {/* Right column — form */}
         <div className="md:col-span-7 md:col-start-6">
-          <form onSubmit={handleSubmit} className="space-y-10">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Item ID */}
             <div>
               <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
@@ -147,6 +192,18 @@ function EvaluatePage({ onSubmit, loading }) {
                   <option key={cond} value={cond}>{cond}</option>
                 ))}
               </select>
+              {/* Custom condition text input */}
+              {isOtherCondition && (
+                <input
+                  type="text"
+                  name="custom_condition"
+                  value={formData.custom_condition}
+                  onChange={handleChange}
+                  placeholder="Describe the condition..."
+                  className="input-editorial mt-4"
+                  autoFocus
+                />
+              )}
             </div>
 
             {/* Image Label (auto-filled, editable) */}
@@ -178,6 +235,60 @@ function EvaluatePage({ onSubmit, loading }) {
                 min="0"
                 className="input-editorial font-mono"
               />
+            </div>
+
+            {/* Return Reason */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Return Reason
+              </label>
+              <select
+                name="return_reason"
+                value={formData.return_reason}
+                onChange={handleChange}
+                className="input-editorial cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%231C1C1C%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0_center]"
+              >
+                <option value="">Select reason</option>
+                {RETURN_REASONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Warranty Left */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Warranty Remaining
+              </label>
+              <select
+                name="warranty_left"
+                value={formData.warranty_left}
+                onChange={handleChange}
+                className="input-editorial cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%231C1C1C%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0_center]"
+              >
+                <option value="">Select warranty status</option>
+                {WARRANTY_OPTIONS.map((w) => (
+                  <option key={w} value={w}>{w}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Repair History */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Repair History
+              </label>
+              <select
+                name="repair_history"
+                value={formData.repair_history}
+                onChange={handleChange}
+                className="input-editorial cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%231C1C1C%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0_center]"
+              >
+                <option value="">Select repair history</option>
+                {REPAIR_OPTIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
             </div>
 
             {/* Divider */}

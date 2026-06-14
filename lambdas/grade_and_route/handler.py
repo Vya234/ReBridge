@@ -33,14 +33,22 @@ dynamodb = boto3.resource("dynamodb", region_name=REGION)
 wallet_table = dynamodb.Table(WALLET_TABLE)
 
 
-def build_prompt(category: str, condition_notes: str, simulated_image_label: str) -> str:
+def build_prompt(category: str, condition_notes: str, simulated_image_label: str, return_reason: str = "", warranty_left: str = "", repair_history: str = "") -> str:
+    extra_context = ""
+    if return_reason:
+        extra_context += f"\n- Return Reason: {return_reason}"
+    if warranty_left:
+        extra_context += f"\n- Warranty Remaining: {warranty_left}"
+    if repair_history:
+        extra_context += f"\n- Repair History: {repair_history}"
+
     return f"""You are a product grading AI for a returns routing system.
 Given the item details below, evaluate the item and respond with ONLY valid JSON — no markdown, no explanation.
 
 Item Details:
 - Category: {category}
 - Condition Notes: {condition_notes}
-- Simulated Image Label: {simulated_image_label}
+- Simulated Image Label: {simulated_image_label}{extra_context}
 
 Respond with exactly this JSON structure:
 {{
@@ -70,6 +78,7 @@ Grading criteria:
 Important rules:
 - Missing accessories alone should NOT drop an item below Grade B.
 - Packaging score should NOT affect the grade — only cosmetic and functional scores determine the grade and routing.
+- If warranty_remaining is '6-12 months' or 'More than 1 year', upgrade the grade by one level (e.g. D→C, C→B) unless the item is completely destroyed or a safety hazard.
 """
 
 
@@ -109,9 +118,12 @@ def lambda_handler(event, context):
         simulated_image_label = body["simulated_image_label"]
         user_id = body.get("user_id", DEFAULT_USER)
         original_price = body.get("original_price", 0)
+        return_reason = body.get("return_reason", "")
+        warranty_left = body.get("warranty_left", "")
+        repair_history = body.get("repair_history", "")
 
         # Call Nova for grading
-        prompt = build_prompt(category, condition_notes, simulated_image_label)
+        prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history)
         ai_result = invoke_nova(prompt)
 
         # Calculate green credits
@@ -136,6 +148,9 @@ def lambda_handler(event, context):
             "green_credits": credits_earned,
             "original_price": original_price,
             "suggested_price": suggested_price,
+            "return_reason": return_reason,
+            "warranty_left": warranty_left,
+            "repair_history": repair_history,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
