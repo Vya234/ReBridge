@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react'
 
 const API_BASE = 'https://s3r8aqjg75.execute-api.ap-south-1.amazonaws.com'
-const ITEM_IDS = [
-  'test-001', 'test-009', 'test-013', 'test-014', 'test-015',
-  'test-016', 'test-018', 'item-002', 'item-011', 'item-019',
-]
 
 const GRADE_STYLES = {
   A: { bg: 'bg-sage-light', text: 'text-sage', border: 'border-sage/30' },
@@ -31,22 +27,19 @@ function HistoryPage() {
 
   const fetchAllItems = async () => {
     setLoading(true)
-    const results = []
-
-    for (const itemId of ITEM_IDS) {
-      try {
-        const res = await fetch(`${API_BASE}/health-card/${itemId}`)
-        if (res.ok) {
-          const data = await res.json()
-          results.push(data)
-        }
-      } catch {
-        // Skip items that fail to fetch
+    try {
+      const res = await fetch(`${API_BASE}/items`)
+      if (res.ok) {
+        const data = await res.json()
+        setItems(data.items || [])
+      } else {
+        setItems([])
       }
+    } catch {
+      setItems([])
+    } finally {
+      setLoading(false)
     }
-
-    setItems(results)
-    setLoading(false)
   }
 
   const toggleExpand = (itemId) => {

@@ -47,6 +47,23 @@ function App() {
     if (userId) fetchWallet()
   }, [userId])
 
+  // Check URL for ?item= param to deep-link to a health card
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const itemParam = params.get('item')
+    if (itemParam && userId) {
+      fetch(`${API_BASE}/health-card/${itemParam}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            setResult(data)
+            setPage('result')
+          }
+        })
+        .catch(() => {})
+    }
+  }, [userId])
+
   const handleWelcomeSubmit = (name) => {
     const id = saveUserId(name)
     setUserId(id)

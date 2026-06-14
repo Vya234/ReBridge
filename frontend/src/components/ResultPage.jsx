@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import ChatPortal from './ChatPortal'
 
 const GRADE_CONFIG = {
@@ -79,6 +80,7 @@ function TrustBar({ label, value, delay = 0 }) {
 
 function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
   const [chatOpen, setChatOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const grade = result.grade || 'A'
   const config = GRADE_CONFIG[grade] || GRADE_CONFIG.A
   const route = result.assigned_route || result.route_decision || 'Resell'
@@ -90,6 +92,11 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
       setChatOpen(true)
     }
   }, [autoOpenChat, route])
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -213,6 +220,30 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
             </div>
           </div>
         )}
+
+        {/* QR Code */}
+        <div className="p-8 md:p-12 border-t border-charcoal/5 flex flex-col items-center gap-4">
+          <QRCodeSVG
+            value={`https://d12xi8surv8so8.cloudfront.net?item=${result.item_id}`}
+            size={128}
+            level="M"
+            bgColor="#FFFFFF"
+            fgColor="#1C1C1C"
+          />
+          <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans">
+            Scan to verify this Product Health Card
+          </p>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(`https://d12xi8surv8so8.cloudfront.net?item=${result.item_id}`)
+              setCopied(true)
+              setTimeout(() => setCopied(false), 2000)
+            }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 border border-charcoal/15 text-charcoal/60 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-all duration-300"
+          >
+            {copied ? '✓ Copied!' : '🔗 Share Health Card'}
+          </button>
+        </div>
       </div>
 
       {/* Footer actions */}
