@@ -167,13 +167,13 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
       <div className="animate-slide-up bg-white border border-charcoal/8 rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(28,28,28,0.08)]">
 
         {/* Submitted Photo */}
-        {submittedImage && (
+        {(submittedImage || result.image_url) && (
           <div className="relative border-b border-charcoal/5 bg-cream flex items-center justify-center p-6">
             <p className="absolute top-4 left-6 text-[9px] uppercase tracking-[0.2em] text-charcoal/40 font-sans z-10">
               Submitted Photo
             </p>
             <img
-              src={submittedImage}
+              src={result.image_url || submittedImage}
               alt="Submitted product"
               className="max-h-[300px] object-contain rounded-lg border border-charcoal/8 shadow-sm"
             />

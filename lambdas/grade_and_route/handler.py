@@ -21,6 +21,7 @@ import db_client
 REGION = "ap-south-1"
 MODEL_ID = "apac.amazon.nova-lite-v1:0"
 WALLET_TABLE = "GreenWallet"
+IMAGE_BUCKET = "rebridge-product-images"
 DEFAULT_USER = "default_user"
 
 GREEN_CREDITS = {
@@ -33,6 +34,7 @@ GREEN_CREDITS = {
 bedrock = boto3.client("bedrock-runtime", region_name=REGION)
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
 wallet_table = dynamodb.Table(WALLET_TABLE)
+s3_client = boto3.client("s3", region_name=REGION)
 
 
 def build_prompt(category: str, condition_notes: str, simulated_image_label: str, return_reason: str = "", warranty_left: str = "", repair_history: str = "") -> str:
@@ -185,6 +187,21 @@ def lambda_handler(event, context):
         prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history)
         ai_result = invoke_nova(prompt, image_bytes)
 
+        # Upload image to S3 if present
+        image_url = None
+        if image_bytes:
+            try:
+                s3_key = f"{item_id}.jpg"
+                s3_client.put_object(
+                    Bucket=IMAGE_BUCKET,
+                    Key=s3_key,
+                    Body=image_bytes,
+                    ContentType="image/jpeg",
+                )
+                image_url = f"https://{IMAGE_BUCKET}.s3.{REGION}.amazonaws.com/{s3_key}"
+            except Exception:
+                pass  # Non-critical — continue without image URL
+
         # Calculate green credits
         route = ai_result["route_decision"]
         credits_earned = GREEN_CREDITS.get(route, 0)
@@ -214,6 +231,7 @@ def lambda_handler(event, context):
             "city": city,
             "locality": locality,
             "has_image": image_bytes is not None,
+            "image_url": image_url,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 

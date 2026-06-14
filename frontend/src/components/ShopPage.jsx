@@ -17,7 +17,17 @@ function ProductCard({ item, onChatWithSeller }) {
   const route = item.assigned_route || item.route_decision || ''
 
   return (
-    <div className="bg-white border border-charcoal/6 rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div className="bg-white border border-charcoal/6 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+      {/* Product image from S3 */}
+      {item.image_url && (
+        <div className="relative bg-cream">
+          <img src={item.image_url} alt={item.item_id} className="w-full h-40 object-contain p-3" />
+          <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-charcoal/60 backdrop-blur-sm text-white text-[9px] font-sans rounded-full">
+            📸 Vision Verified
+          </span>
+        </div>
+      )}
+      <div className="p-6">
       {/* Top row: grade + discount */}
       <div className="flex items-start justify-between mb-4">
         <div
@@ -106,6 +116,7 @@ function ProductCard({ item, onChatWithSeller }) {
             💬 Chat with Seller
           </button>
         )}
+      </div>
       </div>
     </div>
   )

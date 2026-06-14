@@ -313,9 +313,13 @@ function HistoryPage({ onReeval }) {
                             Scan Health Card
                           </p>
                           {item.has_image && (
-                            <span className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[10px] font-sans text-charcoal/45">
-                              📸 AI Vision analyzed
-                            </span>
+                            item.image_url ? (
+                              <img src={item.image_url} alt="Product" className="w-24 h-24 object-contain rounded-lg border border-charcoal/8" />
+                            ) : (
+                              <span className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[10px] font-sans text-charcoal/45">
+                                📸 AI Vision analyzed
+                              </span>
+                            )
                           )}
                           <button
                             onClick={() => {
