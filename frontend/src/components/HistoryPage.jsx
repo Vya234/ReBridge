@@ -22,6 +22,7 @@ function HistoryPage({ onReeval }) {
   const [expandedId, setExpandedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [cityFilter, setCityFilter] = useState('')
+  const [copiedId, setCopiedId] = useState(null)
 
   useEffect(() => {
     fetchAllItems()
@@ -223,10 +224,11 @@ function HistoryPage({ onReeval }) {
                   </div>
 
                   {/* Grade badge */}
-                  <div className="md:col-span-1 flex items-center">
+                  <div className="md:col-span-1 flex items-center gap-1">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full border font-serif text-sm font-bold ${gradeStyle.bg} ${gradeStyle.text} ${gradeStyle.border}`}>
                       {grade}
                     </span>
+                    {item.has_image && <span className="text-[10px]" title="AI Vision Verified">📸</span>}
                   </div>
 
                   {/* Route pill */}
@@ -298,7 +300,7 @@ function HistoryPage({ onReeval }) {
                           )}
                         </div>
 
-                        {/* Right: QR code + Re-evaluate */}
+                        {/* Right: QR code + Re-evaluate + Share */}
                         <div className="flex flex-col items-center justify-center shrink-0 gap-3">
                           <img
                             src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)}`}
@@ -310,6 +312,21 @@ function HistoryPage({ onReeval }) {
                           <p className="text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
                             Scan Health Card
                           </p>
+                          {item.has_image && (
+                            <span className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[10px] font-sans text-charcoal/45">
+                              📸 AI Vision analyzed
+                            </span>
+                          )}
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)
+                              setCopiedId(item.item_id)
+                              setTimeout(() => setCopiedId(null), 2000)
+                            }}
+                            className="px-4 py-2 border border-charcoal/15 text-charcoal/50 font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
+                          >
+                            {copiedId === item.item_id ? '✓ Copied!' : '🔗 Share'}
+                          </button>
                           {onReeval && (
                             <button
                               onClick={() => onReeval(item.item_id)}

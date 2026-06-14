@@ -75,13 +75,23 @@ function ProductCard({ item, onChatWithSeller }) {
 
       {/* Location tag */}
       {item.city && (
-        <div className="flex items-center gap-1 mb-5">
+        <div className="flex items-center gap-1 mb-3">
           <span className="text-[10px] text-charcoal/35 font-sans">📍</span>
           <span className="text-[10px] text-charcoal/40 font-sans">
             {item.locality ? `${item.locality}, ${item.city}` : item.city}
           </span>
         </div>
       )}
+
+      {/* AI Vision badge */}
+      {item.has_image && (
+        <div className="mb-5">
+          <span className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[10px] font-sans text-charcoal/45">
+            📸 AI Vision Verified
+          </span>
+        </div>
+      )}
+      {!item.has_image && !item.city && <div className="mb-5"></div>}
 
       {/* Buttons */}
       <div className="space-y-2">
