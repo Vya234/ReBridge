@@ -89,13 +89,18 @@ Important rules:
 
 def invoke_nova(prompt: str, image_bytes: bytes = None) -> dict:
     """Call Amazon Nova Lite via Bedrock converse() API. Supports text + optional image."""
+    import logging
+    import re
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
     # Build content blocks
     content = []
 
     # Always include text prompt
     content.append({"text": prompt})
 
-    # Optionally include image
+    # Optionally include image (image_bytes here is already decoded bytes)
     if image_bytes:
         content.append({
             "image": {
@@ -105,6 +110,8 @@ def invoke_nova(prompt: str, image_bytes: bytes = None) -> dict:
                 }
             }
         })
+
+    logger.info(f"Calling converse() with {len(content)} content blocks, image={'yes' if image_bytes else 'no'}")
 
     response = bedrock.converse(
         modelId=MODEL_ID,
@@ -117,10 +124,26 @@ def invoke_nova(prompt: str, image_bytes: bytes = None) -> dict:
     )
 
     # Parse response from converse() format
+    logger.info(f"converse() response keys: {list(response.keys())}")
+    logger.info(f"output keys: {list(response.get('output', {}).keys())}")
+
     assistant_text = response["output"]["message"]["content"][0]["text"]
+    logger.info(f"Raw assistant text: {assistant_text[:500]}")
+
+    # Clean up — remove markdown code blocks if present
+    cleaned = assistant_text.strip()
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+    logger.info(f"Cleaned text for JSON parse: {cleaned[:500]}")
 
     # Parse the JSON from Nova's response
-    return json.loads(assistant_text)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON parse failed: {e}. Raw text was: {assistant_text}")
+        raise
 
 
 def lambda_handler(event, context):
