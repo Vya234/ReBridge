@@ -16,7 +16,7 @@ const ROUTE_STYLES = {
   Recycle: { bg: 'bg-red-50', text: 'text-red-600' },
 }
 
-function HistoryPage() {
+function HistoryPage({ onReeval }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState(null)
@@ -233,8 +233,8 @@ function HistoryPage() {
                           )}
                         </div>
 
-                        {/* Right: QR code */}
-                        <div className="flex flex-col items-center justify-center shrink-0">
+                        {/* Right: QR code + Re-evaluate */}
+                        <div className="flex flex-col items-center justify-center shrink-0 gap-3">
                           <img
                             src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)}`}
                             alt="Health Card QR"
@@ -242,9 +242,17 @@ function HistoryPage() {
                             height={100}
                             className="rounded"
                           />
-                          <p className="mt-2 text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
+                          <p className="text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
                             Scan Health Card
                           </p>
+                          {onReeval && (
+                            <button
+                              onClick={() => onReeval(item.item_id)}
+                              className="px-4 py-2 border border-terracotta/30 text-terracotta font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:bg-terracotta/5 transition-colors"
+                            >
+                              ↻ Re-evaluate
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

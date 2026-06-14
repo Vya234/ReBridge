@@ -78,9 +78,10 @@ function TrustBar({ label, value, delay = 0 }) {
   )
 }
 
-function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
+function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousGrade }) {
   const [chatOpen, setChatOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [idCopied, setIdCopied] = useState(false)
   const grade = result.grade || 'A'
   const config = GRADE_CONFIG[grade] || GRADE_CONFIG.A
   const route = result.assigned_route || result.route_decision || 'Resell'
@@ -109,6 +110,36 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat }) {
           </h2>
           <span className="pill">{result.category}</span>
         </div>
+
+        {/* ReBridge ID with copy */}
+        {result.item_id && result.item_id.startsWith('RB-') && (
+          <div className="mt-3 flex items-center gap-2">
+            <span className="font-sans text-xs text-charcoal/40">Your ReBridge ID:</span>
+            <span className="font-mono text-sm font-medium text-charcoal">{result.item_id}</span>
+            <button
+              onClick={() => { navigator.clipboard.writeText(result.item_id); setIdCopied(true); setTimeout(() => setIdCopied(false), 2000) }}
+              className="text-[10px] font-sans text-terracotta/70 hover:text-terracotta transition-colors"
+            >
+              {idCopied ? '✓ Copied' : '📋 Copy'}
+            </button>
+          </div>
+        )}
+
+        {/* Re-evaluation comparison */}
+        {previousGrade && previousGrade !== grade && (
+          <div className="mt-4 px-5 py-3 bg-terracotta/5 border border-terracotta/20 rounded-lg animate-fade-in">
+            <p className="font-sans text-sm text-terracotta font-medium">
+              Re-evaluation: Grade changed from <span className="font-bold">{previousGrade}</span> → <span className="font-bold">{grade}</span>
+            </p>
+          </div>
+        )}
+        {previousGrade && previousGrade === grade && (
+          <div className="mt-4 px-5 py-3 bg-sage-light border border-sage/20 rounded-lg animate-fade-in">
+            <p className="font-sans text-sm text-sage font-medium">
+              No change detected — Grade remains <span className="font-bold">{grade}</span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Green Credits Celebration */}

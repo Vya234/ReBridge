@@ -8,6 +8,7 @@ the result to DynamoDB.
 import json
 import sys
 import os
+import random
 from datetime import datetime, timezone
 
 import boto3
@@ -112,7 +113,12 @@ def lambda_handler(event, context):
         else:
             body = event.get("body") or event
 
-        item_id = body["item_id"]
+        item_id = body.get("item_id", "")
+        if not item_id or item_id.strip() == "":
+            year = datetime.now(timezone.utc).year
+            digits = str(random.randint(0, 999999)).zfill(6)
+            item_id = f"RB-{year}-{digits}"
+
         category = body["category"]
         condition_notes = body["condition_notes"]
         simulated_image_label = body["simulated_image_label"]

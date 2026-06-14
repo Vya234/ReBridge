@@ -27,6 +27,8 @@ function App() {
   const [error, setError] = useState(null)
   const [walletCredits, setWalletCredits] = useState(0)
   const [autoOpenChat, setAutoOpenChat] = useState(false)
+  const [prefillItemId, setPrefillItemId] = useState('')
+  const [previousGrade, setPreviousGrade] = useState(null)
 
   // Fetch wallet balance
   const fetchWallet = async (uid) => {
@@ -80,16 +82,33 @@ function App() {
   const handleEvaluate = async (formData) => {
     setLoading(true)
     setError(null)
+    setPreviousGrade(null)
+
+    // If re-evaluating, fetch old record first
+    if (formData._isReeval && formData.item_id) {
+      try {
+        const oldRes = await fetch(`${API_BASE}/health-card/${formData.item_id}`)
+        if (oldRes.ok) {
+          const oldData = await oldRes.json()
+          setPreviousGrade(oldData.grade || null)
+        }
+      } catch {
+        // Continue even if old fetch fails
+      }
+    }
+
     try {
+      const { _isReeval, ...submitData } = formData
       const response = await fetch(`${API_BASE}/evaluate-return`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, user_id: userId }),
+        body: JSON.stringify({ ...submitData, user_id: userId }),
       })
       if (!response.ok) throw new Error(`Request failed (${response.status})`)
       const data = await response.json()
       setResult(data)
       setPage('result')
+      setPrefillItemId('')
       fetchWallet()
     } catch (err) {
       setError(err.message)
@@ -209,12 +228,12 @@ function App() {
       {/* Pages */}
       <main className="pt-20">
         {page === 'home' && <HomePage onNavigate={() => setPage('evaluate')} onNavigateShop={() => setPage('shop')} />}
-        {page === 'evaluate' && <EvaluatePage onSubmit={handleEvaluate} loading={loading} />}
+        {page === 'evaluate' && <EvaluatePage onSubmit={handleEvaluate} loading={loading} prefillItemId={prefillItemId} />}
         {page === 'result' && result && (
-          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} autoOpenChat={autoOpenChat} />
+          <ResultPage result={result} onViewHealthCard={handleViewHealthCard} loading={loading} autoOpenChat={autoOpenChat} previousGrade={previousGrade} />
         )}
         {page === 'shop' && <ShopPage onChatWithSeller={handleChatWithSeller} />}
-        {page === 'history' && <HistoryPage />}
+        {page === 'history' && <HistoryPage onReeval={(itemId) => { setPrefillItemId(itemId); setPage('evaluate') }} />}
         {page === 'seller' && <SellerPortal />}
       </main>
     </div>

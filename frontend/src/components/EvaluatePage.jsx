@@ -54,9 +54,9 @@ const REPAIR_OPTIONS = [
   'Unknown',
 ]
 
-function EvaluatePage({ onSubmit, loading }) {
+function EvaluatePage({ onSubmit, loading, prefillItemId }) {
   const [formData, setFormData] = useState({
-    item_id: '',
+    item_id: prefillItemId || '',
     category: '',
     condition_notes: '',
     custom_condition: '',
@@ -66,6 +66,7 @@ function EvaluatePage({ onSubmit, loading }) {
     warranty_left: '',
     repair_history: '',
   })
+  const [isReeval, setIsReeval] = useState(!!prefillItemId)
 
   const conditions = formData.category ? CONDITION_OPTIONS[formData.category] || [] : []
   const isOtherCondition = formData.condition_notes === 'Other (describe below)'
@@ -107,12 +108,13 @@ function EvaluatePage({ onSubmit, loading }) {
       return_reason: formData.return_reason,
       warranty_left: formData.warranty_left,
       repair_history: formData.repair_history,
+      _isReeval: isReeval && formData.item_id ? true : false,
     }
     onSubmit(payload)
   }
 
   const conditionFilled = isOtherCondition ? formData.custom_condition.trim() : formData.condition_notes
-  const isValid = formData.item_id && formData.category && conditionFilled && formData.simulated_image_label
+  const isValid = formData.category && conditionFilled && formData.simulated_image_label
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -142,17 +144,31 @@ function EvaluatePage({ onSubmit, loading }) {
         {/* Right column — form */}
         <div className="md:col-span-7 md:col-start-6">
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Re-evaluate toggle */}
+            <div className="flex items-center gap-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isReeval}
+                  onChange={(e) => { setIsReeval(e.target.checked); if (!e.target.checked) setFormData(f => ({...f, item_id: ''})) }}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-charcoal/10 rounded-full peer peer-checked:bg-terracotta/70 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+              </label>
+              <span className="text-[11px] font-sans text-charcoal/50">Re-evaluating a previously graded item?</span>
+            </div>
+
             {/* Item ID */}
             <div>
               <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
-                Item Identifier
+                {isReeval ? 'Existing ReBridge ID' : 'Item Identifier (Optional)'}
               </label>
               <input
                 type="text"
                 name="item_id"
                 value={formData.item_id}
                 onChange={handleChange}
-                placeholder="ITEM-001"
+                placeholder={isReeval ? 'e.g. RB-2026-004521' : 'Leave blank to auto-generate RB-ID'}
                 className="input-editorial font-mono"
               />
             </div>
