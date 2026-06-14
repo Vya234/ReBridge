@@ -142,8 +142,9 @@ function MyEvaluations({ userId, onReeval }) {
                 {isExpanded && (
                   <div className="px-6 pb-6 animate-fade-in">
                     <div className="ml-0 md:ml-6 p-5 bg-cream rounded-lg border border-charcoal/5">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="flex-1">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        {/* Left 60%: condition + trust */}
+                        <div className="md:col-span-7">
                           {item.condition_summary && (
                             <div className="mb-4">
                               <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-1">Condition Summary</p>
@@ -172,44 +173,48 @@ function MyEvaluations({ userId, onReeval }) {
                             </div>
                           )}
                         </div>
-                        <div className="flex flex-col items-center justify-center shrink-0 gap-3">
-                          <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)}`}
-                            alt="Health Card QR"
-                            width={100}
-                            height={100}
-                            className="rounded"
-                          />
-                          <p className="text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
-                            Scan Health Card
-                          </p>
-                          {item.has_image && (
-                            item.image_url ? (
-                              <img src={item.image_url} alt="Product" className="w-24 h-24 object-contain rounded-lg border border-charcoal/8" />
-                            ) : (
-                              <span className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[10px] font-sans text-charcoal/45">
-                                📸 AI Vision analyzed
-                              </span>
-                            )
-                          )}
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)
-                              setCopiedId(item.item_id)
-                              setTimeout(() => setCopiedId(null), 2000)
-                            }}
-                            className="px-4 py-2 border border-charcoal/15 text-charcoal/50 font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
-                          >
-                            {copiedId === item.item_id ? '✓ Copied!' : '🔗 Share'}
-                          </button>
-                          {onReeval && (
+
+                        {/* Right 40%: photo + QR side by side */}
+                        <div className="md:col-span-5">
+                          <div className="flex gap-4 justify-end">
+                            {item.image_url && (
+                              <div className="shrink-0">
+                                <img src={item.image_url} alt="Product" className="w-[120px] h-[120px] object-contain rounded-lg border border-charcoal/8 bg-white" />
+                              </div>
+                            )}
+                            <div className="flex flex-col items-center shrink-0">
+                              <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)}`}
+                                alt="QR"
+                                width={100}
+                                height={100}
+                                className="rounded"
+                              />
+                              <p className="mt-1 text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
+                                Scan Health Card
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 justify-end mt-4">
                             <button
-                              onClick={() => onReeval(item.item_id)}
-                              className="px-4 py-2 border border-terracotta/30 text-terracotta font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:bg-terracotta/5 transition-colors"
+                              onClick={() => {
+                                navigator.clipboard.writeText(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)
+                                setCopiedId(item.item_id)
+                                setTimeout(() => setCopiedId(null), 2000)
+                              }}
+                              className="px-4 py-2 border border-charcoal/15 text-charcoal/50 font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
                             >
-                              ↻ Re-evaluate
+                              {copiedId === item.item_id ? '✓ Copied!' : '🔗 Share'}
                             </button>
-                          )}
+                            {onReeval && (
+                              <button
+                                onClick={() => onReeval(item.item_id)}
+                                className="px-4 py-2 border border-terracotta/30 text-terracotta font-sans text-[10px] uppercase tracking-[0.15em] rounded-full hover:bg-terracotta/5 transition-colors"
+                              >
+                                ↻ Re-evaluate
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
