@@ -177,6 +177,30 @@ def lambda_handler(event, context):
         except Exception:
             pass  # Non-critical — don't fail the request if wallet update fails
 
+        # Price intelligence — find similar items
+        price_intelligence = None
+        try:
+            from boto3.dynamodb.conditions import Attr
+            health_table = dynamodb.Table("ProductHealthCards")
+            scan_resp = health_table.scan(
+                FilterExpression=Attr("category").eq(category) & Attr("grade").eq(grade) & Attr("suggested_price").gt(0),
+                Limit=50,
+            )
+            similar = [i for i in scan_resp.get("Items", []) if str(i.get("item_id")) != str(item_id)][:10]
+            if similar:
+                prices = [int(i["suggested_price"]) for i in similar if i.get("suggested_price")]
+                if prices:
+                    price_intelligence = {
+                        "similar_count": len(prices),
+                        "price_min": min(prices),
+                        "price_max": max(prices),
+                        "message": f"Similar Grade {grade} {category} sold between ₹{min(prices):,}–₹{max(prices):,}",
+                    }
+        except Exception:
+            pass  # Non-critical
+
+        record["price_intelligence"] = price_intelligence
+
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},

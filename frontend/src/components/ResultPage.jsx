@@ -235,6 +235,15 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
                 )}
               </div>
             </div>
+            {/* Price Intelligence */}
+            {result.price_intelligence && (
+              <div className="mt-4 px-4 py-2.5 bg-charcoal/[0.03] border border-charcoal/6 rounded-lg inline-flex items-center gap-2">
+                <span className="text-sm">📊</span>
+                <span className="font-sans text-xs text-charcoal/50">
+                  Similar Grade {grade} {result.category}: ₹{result.price_intelligence.price_min?.toLocaleString()}–₹{result.price_intelligence.price_max?.toLocaleString()} (based on {result.price_intelligence.similar_count} items)
+                </span>
+              </div>
+            )}
           </div>
         )}
 
