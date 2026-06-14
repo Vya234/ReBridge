@@ -58,7 +58,7 @@ Respond with exactly this JSON structure:
   "route_decision": "Resell|Refurbish|Donate|Recycle",
   "confidence_score": 0.0-1.0,
   "trust_breakdown": {{
-    "cosmetic": 0.0-1.0,
+    "appearance": 0.0-1.0,
     "functional": 0.0-1.0,
     "packaging": 0.0-1.0
   }}
@@ -144,6 +144,7 @@ def lambda_handler(event, context):
         # Build full record
         record = {
             "item_id": item_id,
+            "user_id": user_id,
             "category": category,
             "condition_score": ai_result.get("confidence_score", 0.0),
             "grade": grade,

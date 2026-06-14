@@ -245,7 +245,7 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
               Trust Breakdown
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <TrustBar label="Cosmetic" value={result.trust_breakdown.cosmetic} delay={0} />
+              <TrustBar label="Appearance" value={result.trust_breakdown.appearance || result.trust_breakdown.cosmetic} delay={0} />
               <TrustBar label="Functional" value={result.trust_breakdown.functional} delay={150} />
               <TrustBar label="Packaging" value={result.trust_breakdown.packaging} delay={300} />
             </div>
