@@ -47,19 +47,51 @@ function HistoryPage({ onReeval }) {
     setExpandedId(expandedId === itemId ? null : itemId)
   }
 
-  // Client-side filter
-  const filteredItems = searchQuery.trim()
-    ? items.filter((item) => {
-        const q = searchQuery.toLowerCase()
-        return (
-          (item.item_id || '').toLowerCase().includes(q) ||
-          (item.category || '').toLowerCase().includes(q) ||
-          (item.grade || '').toLowerCase() === q ||
-          (item.assigned_route || '').toLowerCase().includes(q) ||
-          (item.condition_summary || '').toLowerCase().includes(q)
-        )
-      })
-    : items
+  // Client-side smart filter
+  const filteredItems = (() => {
+    if (!searchQuery.trim()) return items
+
+    const q = searchQuery.toLowerCase()
+
+    // Extract structured filters from query
+    let gradeFilter = null
+    const gradeMatch = q.match(/grade\s*([abcd])/i)
+    if (gradeMatch) gradeFilter = gradeMatch[1].toUpperCase()
+
+    let routeFilter = null
+    if (q.includes('resell')) routeFilter = 'Resell'
+    else if (q.includes('refurbish')) routeFilter = 'Refurbish'
+    else if (q.includes('donate')) routeFilter = 'Donate'
+    else if (q.includes('recycle')) routeFilter = 'Recycle'
+
+    let categoryFilter = null
+    if (q.includes('electronics')) categoryFilter = 'Electronics'
+    else if (q.includes('clothing')) categoryFilter = 'Clothing'
+    else if (q.includes('books')) categoryFilter = 'Books'
+    else if (q.includes('home')) categoryFilter = 'Home'
+
+    // Remaining words for free-text matching
+    let remaining = q
+      .replace(/grade\s*[abcd]/gi, '')
+      .replace(/resell|refurbish|donate|recycle/gi, '')
+      .replace(/electronics|clothing|books|home/gi, '')
+      .trim()
+    const keywords = remaining.split(/\s+/).filter(w => w.length > 1)
+
+    return items.filter((item) => {
+      if (gradeFilter && (item.grade || '') !== gradeFilter) return false
+      if (routeFilter && (item.assigned_route || item.route_decision || '') !== routeFilter) return false
+      if (categoryFilter && (item.category || '') !== categoryFilter) return false
+
+      if (keywords.length > 0) {
+        const text = `${item.item_id || ''} ${item.condition_summary || ''}`.toLowerCase()
+        const match = keywords.some(kw => text.includes(kw))
+        if (!match) return false
+      }
+
+      return true
+    })
+  })()
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -76,22 +108,36 @@ function HistoryPage({ onReeval }) {
 
       {/* Search bar */}
       {!loading && items.length > 0 && (
-        <div className="mb-8 flex flex-col sm:flex-row gap-3">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search history... e.g. Electronics Grade A"
-            className="flex-1 px-5 py-3 bg-white border border-charcoal/10 rounded-full font-sans text-sm text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="px-5 py-3 border border-charcoal/15 text-charcoal/60 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
-            >
-              ✕ Clear
-            </button>
-          )}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search history... e.g. Electronics Grade A"
+              className="flex-1 px-5 py-3 bg-white border border-charcoal/10 rounded-full font-sans text-sm text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="px-5 py-3 border border-charcoal/15 text-charcoal/60 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+          {/* Search hint chips */}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {['Electronics', 'Grade A', 'Refurbish', 'Clothing Grade B', 'Donate'].map(hint => (
+              <button
+                key={hint}
+                onClick={() => setSearchQuery(hint)}
+                className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[11px] font-sans text-charcoal/45 hover:border-terracotta/40 hover:text-terracotta transition-colors"
+              >
+                {hint}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

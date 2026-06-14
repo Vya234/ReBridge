@@ -212,6 +212,24 @@ function ShopPage({ onChatWithSeller }) {
             </button>
           )}
         </form>
+        {/* Search hint chips */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {['fully functional laptop', 'Grade A electronics', 'clothing under ₹2000', 'refurbished books'].map(hint => (
+            <button
+              key={hint}
+              onClick={() => { setNlQuery(hint); setNlSearching(true); setNlSearched(true); setSearched(false);
+                fetch(`${API_BASE}/search`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({query: hint}) })
+                  .then(r => r.ok ? r.json() : {items:[]})
+                  .then(d => setItems(d.items || []))
+                  .catch(() => setItems([]))
+                  .finally(() => setNlSearching(false))
+              }}
+              className="px-3 py-1 bg-charcoal/[0.04] border border-charcoal/8 rounded-full text-[11px] font-sans text-charcoal/45 hover:border-terracotta/40 hover:text-terracotta transition-colors"
+            >
+              {hint}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* NL Search Results */}
