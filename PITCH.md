@@ -37,7 +37,7 @@ One intelligent loop that closes every gap:
 Return → AI grades in 2 sec → Smart routing → Health Card + Price
   → Listed on certified store with NLP search
     → Buyer negotiates via real-time chat
-      → Green Credits earned → Risk check prevents next return
+      → Green Credits earned → AI Purchase Advisor empowers next smart buy
 ```
 
 Every Amazon requirement. One platform. 18 features. Full circle.
@@ -58,7 +58,7 @@ Every Amazon requirement. One platform. 18 features. Full circle.
 | 8 | **Shop Certified** | Browse refurb inventory with suggested prices |
 | 9 | **NLP Search** | "Grade A electronics under ₹20000" via Nova |
 | 10 | **P2P Chat** | WebSocket negotiation between buyer & seller |
-| 11 | **Return Prevention** | Pre-purchase risk check on homepage |
+| 11 | **AI Purchase Advisor** | Compatibility scoring, checklist, risks — empowers smarter buying |
 | 12 | **Product Gallery** | Public catalog with smart search + QR codes |
 | 13 | **My Evaluations** | Personal dashboard per user |
 | 14 | **Green Credits** | Per-user rewards (Donate=50, Refurbish=30...) |
@@ -112,7 +112,7 @@ Every Amazon requirement. One platform. 18 features. Full circle.
 | 4 | **Chat** — real-time buyer-seller negotiation |
 | 5 | **Bulk Upload** — CSV with 5 items, batch AI grading |
 | 6 | **Green Credits** — watch wallet grow with each evaluation |
-| 7 | **Prevention** — check return risk before buying |
+| 7 | **AI Purchase Advisor** — compatibility check before buying |
 
 **Built in 48 hours. 18 features. 9 Lambda functions. 3 DynamoDB tables. Fully deployed on AWS. Ready to scale.**
 

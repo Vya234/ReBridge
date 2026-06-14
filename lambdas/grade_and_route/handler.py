@@ -1,14 +1,15 @@
 """
 Lambda: grade_and_route
 Endpoint: POST /evaluate-return
-Evaluates a returned item using Amazon Nova Micro via Bedrock and writes
-the result to DynamoDB.
+Evaluates a returned item using Amazon Nova Lite via Bedrock converse() API.
+Supports multimodal input (text + optional image).
 """
 
 import json
 import sys
 import os
 import random
+import base64
 from datetime import datetime, timezone
 
 import boto3
@@ -18,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "shared"))
 import db_client
 
 REGION = "ap-south-1"
-MODEL_ID = "apac.amazon.nova-micro-v1:0"
+MODEL_ID = "apac.amazon.nova-lite-v1:0"
 WALLET_TABLE = "GreenWallet"
 DEFAULT_USER = "default_user"
 
@@ -44,12 +45,14 @@ def build_prompt(category: str, condition_notes: str, simulated_image_label: str
         extra_context += f"\n- Repair History: {repair_history}"
 
     return f"""You are a product grading AI for a returns routing system.
-Given the item details below, evaluate the item and respond with ONLY valid JSON — no markdown, no explanation.
+Given the item details below (and the uploaded product photo if provided), evaluate the item and respond with ONLY valid JSON — no markdown, no explanation.
 
 Item Details:
 - Category: {category}
 - Condition Notes: {condition_notes}
-- Simulated Image Label: {simulated_image_label}{extra_context}
+- Image Label: {simulated_image_label}{extra_context}
+
+If a product photo is provided, use it to assess visible cosmetic damage, wear, scratches, cracks, stains, and overall appearance. The photo is the primary evidence for appearance scoring.
 
 Respond with exactly this JSON structure:
 {{
@@ -78,27 +81,43 @@ Grading criteria:
 
 Important rules:
 - Missing accessories alone should NOT drop an item below Grade B.
-- Packaging score should NOT affect the grade — only cosmetic and functional scores determine the grade and routing.
+- Packaging score should NOT affect the grade — only appearance and functional scores determine the grade and routing.
 - If warranty_remaining is '6-12 months' or 'More than 1 year', upgrade the grade by one level (e.g. D→C, C→B) unless the item is completely destroyed or a safety hazard.
+- If a photo is provided, weight the appearance score heavily based on what you see in the image.
 """
 
 
-def invoke_nova(prompt: str) -> dict:
-    """Call Amazon Nova Micro via Bedrock and return parsed JSON."""
-    response = bedrock.invoke_model(
-        modelId=MODEL_ID,
-        body=json.dumps({
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [{"text": prompt}]
+def invoke_nova(prompt: str, image_bytes: bytes = None) -> dict:
+    """Call Amazon Nova Lite via Bedrock converse() API. Supports text + optional image."""
+    # Build content blocks
+    content = []
+
+    # Always include text prompt
+    content.append({"text": prompt})
+
+    # Optionally include image
+    if image_bytes:
+        content.append({
+            "image": {
+                "format": "jpeg",
+                "source": {
+                    "bytes": image_bytes,
                 }
-            ]
-        }),
+            }
+        })
+
+    response = bedrock.converse(
+        modelId=MODEL_ID,
+        messages=[
+            {
+                "role": "user",
+                "content": content,
+            }
+        ],
     )
 
-    response_body = json.loads(response["body"].read())
-    assistant_text = response_body["output"]["message"]["content"][0]["text"]
+    # Parse response from converse() format
+    assistant_text = response["output"]["message"]["content"][0]["text"]
 
     # Parse the JSON from Nova's response
     return json.loads(assistant_text)
@@ -130,9 +149,18 @@ def lambda_handler(event, context):
         city = body.get("city", "")
         locality = body.get("locality", "")
 
-        # Call Nova for grading
+        # Handle optional image upload (base64 string)
+        image_bytes = None
+        image_b64 = body.get("image_bytes")
+        if image_b64 and isinstance(image_b64, str) and len(image_b64) > 100:
+            try:
+                image_bytes = base64.b64decode(image_b64)
+            except Exception:
+                image_bytes = None
+
+        # Call Nova for grading (with optional image)
         prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history)
-        ai_result = invoke_nova(prompt)
+        ai_result = invoke_nova(prompt, image_bytes)
 
         # Calculate green credits
         route = ai_result["route_decision"]
@@ -162,6 +190,7 @@ def lambda_handler(event, context):
             "repair_history": repair_history,
             "city": city,
             "locality": locality,
+            "has_image": image_bytes is not None,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
@@ -179,7 +208,7 @@ def lambda_handler(event, context):
                 },
             )
         except Exception:
-            pass  # Non-critical — don't fail the request if wallet update fails
+            pass  # Non-critical
 
         # Price intelligence — find similar items
         price_intelligence = None

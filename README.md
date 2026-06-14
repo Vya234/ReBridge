@@ -125,12 +125,16 @@ Return initiated
 
 ### Prevention & Intelligence
 
-#### 11. Check Before You Buy
-- Pre-purchase risk assessment on homepage
-- Enter category + usage description
-- AI evaluates return risk
-- Grade C/D → "High Return Risk" with Shop Refurbished link
-- Grade A/B → "Low Return Risk — Great buy!"
+#### 11. AI Purchase Advisor
+- Upgraded pre-purchase intelligence replacing binary risk warnings with deep compatibility analysis
+- Evaluates free-text purchase intent against product category via dedicated Bedrock prompt
+- Generates a 0–100 **Compatibility Score** (green ≥80, orange 50–79, red <50)
+- Outputs personalized reasoning (2–3 bullet points)
+- Strict compatibility checklist with Pass ✅ / Warn ⚠️ / Fail ❌ status per criterion
+- Explicitly identifies potential return risks
+- Delivers actionable final recommendation (e.g. "Verify software compatibility", "Shop Refurbished instead")
+- Premium UI matching the Product Health Card layout — form hides on result, full-screen focus
+- "Shop Refurbished Instead" CTA when score is below 50
 
 ### Gallery & History
 
@@ -208,7 +212,7 @@ Return initiated
 | Personalized refurb recommendations | Shop Certified Refurbished + NLP Search + Price Suggestion |
 | Sustainable incentives | Green Credits Wallet + Celebration Animations |
 | Easy P2P resale | Real-time WebSocket Chat + AI Price Suggestion |
-| Predictive return prevention | Check Before You Buy + Return Risk Assessment |
+| Predictive return prevention | AI Purchase Advisor | Compatibility scoring + checklist empowers smarter buying |
 
 ---
 

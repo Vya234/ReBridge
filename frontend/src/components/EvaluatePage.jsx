@@ -69,6 +69,9 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     locality: '',
   })
   const [isReeval, setIsReeval] = useState(!!prefillItemId)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [imageBase64, setImageBase64] = useState(null)
 
   const conditions = formData.category ? CONDITION_OPTIONS[formData.category] || [] : []
   const isOtherCondition = formData.condition_notes === 'Other (describe below)'
@@ -98,6 +101,26 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     setFormData(updated)
   }
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+
+    // Auto-set image label
+    setFormData(prev => ({ ...prev, simulated_image_label: 'user_uploaded_image' }))
+
+    // Convert to base64
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result
+      // Strip data:image/...;base64, prefix
+      const base64 = result.split(',')[1]
+      setImageBase64(base64)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const conditionValue = isOtherCondition ? formData.custom_condition : formData.condition_notes
@@ -112,6 +135,7 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
       repair_history: formData.repair_history,
       city: formData.city,
       locality: formData.locality,
+      image_bytes: imageBase64 || null,
       _isReeval: isReeval && formData.item_id ? true : false,
     }
     onSubmit(payload)
@@ -239,6 +263,39 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
                 placeholder="Auto-fills from condition"
                 className="input-editorial font-mono text-charcoal/60"
               />
+            </div>
+
+            {/* Product Photo Upload */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Upload Product Photo (Optional but Recommended)
+              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                  imagePreview ? 'border-sage/40 bg-sage-light/30' : 'border-charcoal/15 hover:border-terracotta/40'
+                }`}>
+                  {imagePreview ? (
+                    <div className="flex items-center gap-4">
+                      <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-lg" />
+                      <div className="text-left">
+                        <p className="font-sans text-sm text-charcoal/70">{imageFile?.name}</p>
+                        <p className="font-sans text-xs text-sage">✓ Photo ready for AI analysis</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="font-sans text-sm text-charcoal/40">📷 Drop a photo or click to browse</p>
+                      <p className="font-sans text-[10px] text-charcoal/25 mt-1">AI will analyze visible damage, wear, and condition</p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Original Price */}
