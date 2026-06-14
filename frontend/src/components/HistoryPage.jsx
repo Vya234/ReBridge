@@ -20,6 +20,7 @@ function HistoryPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     fetchAllItems()
@@ -46,6 +47,20 @@ function HistoryPage() {
     setExpandedId(expandedId === itemId ? null : itemId)
   }
 
+  // Client-side filter
+  const filteredItems = searchQuery.trim()
+    ? items.filter((item) => {
+        const q = searchQuery.toLowerCase()
+        return (
+          (item.item_id || '').toLowerCase().includes(q) ||
+          (item.category || '').toLowerCase().includes(q) ||
+          (item.grade || '').toLowerCase() === q ||
+          (item.assigned_route || '').toLowerCase().includes(q) ||
+          (item.condition_summary || '').toLowerCase().includes(q)
+        )
+      })
+    : items
+
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
       {/* Header */}
@@ -58,6 +73,34 @@ function HistoryPage() {
           Complete audit trail of every item graded and routed through ReBridge.
         </p>
       </div>
+
+      {/* Search bar */}
+      {!loading && items.length > 0 && (
+        <div className="mb-8 flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search history... e.g. Electronics Grade A"
+            className="flex-1 px-5 py-3 bg-white border border-charcoal/10 rounded-full font-sans text-sm text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="px-5 py-3 border border-charcoal/15 text-charcoal/60 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
+            >
+              ✕ Clear
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Filter result count */}
+      {searchQuery.trim() && !loading && (
+        <p className="mb-4 font-sans text-xs text-charcoal/50">
+          {filteredItems.length} result{filteredItems.length !== 1 ? 's' : ''} for "{searchQuery}"
+        </p>
+      )}
 
       {/* Loading state */}
       {loading && (
@@ -89,7 +132,7 @@ function HistoryPage() {
           </div>
 
           {/* Rows */}
-          {items.map((item) => {
+          {filteredItems.map((item) => {
             const grade = item.grade || '—'
             const gradeStyle = GRADE_STYLES[grade] || { bg: 'bg-gray-100', text: 'text-gray-500', border: 'border-gray-200' }
             const route = item.assigned_route || item.route_decision || '—'
@@ -155,36 +198,55 @@ function HistoryPage() {
                 {isExpanded && (
                   <div className="px-6 pb-6 animate-fade-in">
                     <div className="ml-0 md:ml-6 p-5 bg-cream rounded-lg border border-charcoal/5">
-                      {/* Condition summary */}
-                      {item.condition_summary && (
-                        <div className="mb-4">
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-1">Condition Summary</p>
-                          <p className="font-serif text-base text-charcoal italic">"{item.condition_summary}"</p>
-                        </div>
-                      )}
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {/* Left: condition + trust */}
+                        <div className="flex-1">
+                          {/* Condition summary */}
+                          {item.condition_summary && (
+                            <div className="mb-4">
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-1">Condition Summary</p>
+                              <p className="font-serif text-base text-charcoal italic">"{item.condition_summary}"</p>
+                            </div>
+                          )}
 
-                      {/* Trust breakdown */}
-                      {item.trust_breakdown && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-3">Trust Breakdown</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            {Object.entries(item.trust_breakdown).map(([key, val]) => {
-                              const percent = Math.round((val || 0) * 100)
-                              return (
-                                <div key={key} className="space-y-1">
-                                  <div className="flex justify-between">
-                                    <span className="text-[10px] uppercase tracking-wider text-charcoal/50 font-sans">{key}</span>
-                                    <span className="font-serif text-sm font-semibold text-charcoal">{percent}</span>
-                                  </div>
-                                  <div className="w-full h-1.5 bg-charcoal/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-charcoal/40 rounded-full" style={{ width: `${percent}%` }}></div>
-                                  </div>
-                                </div>
-                              )
-                            })}
-                          </div>
+                          {/* Trust breakdown */}
+                          {item.trust_breakdown && (
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-3">Trust Breakdown</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {Object.entries(item.trust_breakdown).map(([key, val]) => {
+                                  const percent = Math.round((val || 0) * 100)
+                                  return (
+                                    <div key={key} className="space-y-1">
+                                      <div className="flex justify-between">
+                                        <span className="text-[10px] uppercase tracking-wider text-charcoal/50 font-sans">{key}</span>
+                                        <span className="font-serif text-sm font-semibold text-charcoal">{percent}</span>
+                                      </div>
+                                      <div className="w-full h-1.5 bg-charcoal/5 rounded-full overflow-hidden">
+                                        <div className="h-full bg-charcoal/40 rounded-full" style={{ width: `${percent}%` }}></div>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      )}
+
+                        {/* Right: QR code */}
+                        <div className="flex flex-col items-center justify-center shrink-0">
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://d12xi8surv8so8.cloudfront.net?item=${item.item_id}`)}`}
+                            alt="Health Card QR"
+                            width={100}
+                            height={100}
+                            className="rounded"
+                          />
+                          <p className="mt-2 text-[9px] uppercase tracking-[0.15em] text-charcoal/35 font-sans text-center">
+                            Scan Health Card
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -197,7 +259,7 @@ function HistoryPage() {
       {/* Item count */}
       {!loading && items.length > 0 && (
         <p className="mt-4 text-[11px] font-sans text-charcoal/30 tracking-wide">
-          Showing {items.length} evaluated items
+          Showing {filteredItems.length} of {items.length} evaluated items
         </p>
       )}
     </div>

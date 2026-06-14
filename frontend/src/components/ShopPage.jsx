@@ -96,10 +96,39 @@ function ShopPage({ onChatWithSeller }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [nlQuery, setNlQuery] = useState('')
+  const [nlSearching, setNlSearching] = useState(false)
+  const [nlSearched, setNlSearched] = useState(false)
+
+  const handleNlSearch = async (e) => {
+    e.preventDefault()
+    if (!nlQuery.trim()) return
+    setNlSearching(true)
+    setNlSearched(true)
+    setSearched(false)
+    try {
+      const res = await fetch(`${API_BASE}/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: nlQuery.trim() }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setItems(data.items || [])
+      } else {
+        setItems([])
+      }
+    } catch {
+      setItems([])
+    } finally {
+      setNlSearching(false)
+    }
+  }
 
   const handleSearch = async () => {
     setLoading(true)
     setSearched(true)
+    setNlSearched(false)
 
     try {
       // Try the category endpoint first
@@ -156,7 +185,58 @@ function ShopPage({ onChatWithSeller }) {
         </p>
       </div>
 
-      {/* Search bar */}
+      {/* Natural Language Search */}
+      <div className="mb-10">
+        <form onSubmit={handleNlSearch} className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={nlQuery}
+            onChange={(e) => setNlQuery(e.target.value)}
+            placeholder="Try: refurbished laptop under ₹20000 with high functionality"
+            className="flex-1 px-5 py-3.5 bg-white border border-charcoal/10 rounded-full font-sans text-sm text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terracotta transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={!nlQuery.trim() || nlSearching}
+            className="px-7 py-3.5 bg-terracotta text-cream font-sans text-sm font-medium uppercase tracking-[0.15em] rounded-full hover:bg-terracotta/90 disabled:bg-charcoal/20 disabled:cursor-not-allowed transition-colors"
+          >
+            {nlSearching ? 'Searching...' : '🔍 Smart Search'}
+          </button>
+          {nlSearched && (
+            <button
+              type="button"
+              onClick={() => { setNlSearched(false); setNlQuery(''); setItems([]) }}
+              className="px-5 py-3.5 border border-charcoal/15 text-charcoal/60 font-sans text-xs uppercase tracking-[0.15em] rounded-full hover:border-terracotta hover:text-terracotta transition-colors"
+            >
+              ✕ Clear
+            </button>
+          )}
+        </form>
+      </div>
+
+      {/* NL Search Results */}
+      {nlSearched && !nlSearching && items.length === 0 && (
+        <div className="text-center py-10 mb-8 border-b border-charcoal/5">
+          <p className="font-serif text-xl text-charcoal/30 italic">No items match your search</p>
+          <p className="font-sans text-sm text-charcoal/40 mt-2">Try browsing by category below</p>
+        </div>
+      )}
+
+      {nlSearched && !nlSearching && items.length > 0 && (
+        <div className="mb-12">
+          <p className="font-sans text-xs text-charcoal/40 uppercase tracking-[0.15em] mb-4">
+            {items.length} result{items.length !== 1 ? 's' : ''} found
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+            {items.map((item) => (
+              <ProductCard key={item.item_id} item={item} onChatWithSeller={onChatWithSeller} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Category Search bar — hidden when NL search is active */}
+      {!nlSearched && (
       <div className="flex flex-col sm:flex-row gap-4 mb-12 pb-8 border-b border-charcoal/5">
         <select
           value={category}
@@ -187,16 +267,17 @@ function ShopPage({ onChatWithSeller }) {
           )}
         </button>
       </div>
+      )}
 
-      {/* Results */}
-      {searched && !loading && items.length === 0 && (
+      {/* Category Results */}
+      {searched && !nlSearched && !loading && items.length === 0 && (
         <div className="text-center py-16">
           <p className="font-serif text-2xl text-charcoal/30 italic">No certified items found</p>
           <p className="font-sans text-sm text-charcoal/40 mt-2">Try a different category or check back later</p>
         </div>
       )}
 
-      {items.length > 0 && (
+      {items.length > 0 && !nlSearched && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
           {items.map((item) => (
             <ProductCard key={item.item_id} item={item} onChatWithSeller={onChatWithSeller} />
