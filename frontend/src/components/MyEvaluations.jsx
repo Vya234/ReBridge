@@ -110,11 +110,10 @@ function MyEvaluations({ userId, onReeval }) {
                   <div className="md:col-span-2 flex items-center">
                     <span className="font-sans text-sm text-charcoal/60">{item.category || '—'}</span>
                   </div>
-                  <div className="md:col-span-1 flex items-center gap-1">
+                  <div className="md:col-span-1 flex items-center">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full border font-serif text-sm font-bold ${gradeStyle.bg} ${gradeStyle.text} ${gradeStyle.border}`}>
                       {grade}
                     </span>
-                    {item.has_image && <span className="text-[10px]" title="AI Vision Verified">📸</span>}
                   </div>
                   <div className="md:col-span-2 flex items-center">
                     <span className={`px-3 py-1 rounded-full text-[11px] font-sans font-medium ${routeStyle.bg} ${routeStyle.text}`}>

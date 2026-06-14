@@ -224,11 +224,10 @@ function HistoryPage({ onReeval }) {
                   </div>
 
                   {/* Grade badge */}
-                  <div className="md:col-span-1 flex items-center gap-1">
+                  <div className="md:col-span-1 flex items-center">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full border font-serif text-sm font-bold ${gradeStyle.bg} ${gradeStyle.text} ${gradeStyle.border}`}>
                       {grade}
                     </span>
-                    {item.has_image && <span className="text-[10px]" title="AI Vision Verified">📸</span>}
                   </div>
 
                   {/* Route pill */}

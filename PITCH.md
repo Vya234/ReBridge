@@ -40,15 +40,15 @@ Return → AI grades in 2 sec → Smart routing → Health Card + Price
       → Green Credits earned → AI Purchase Advisor empowers next smart buy
 ```
 
-Every Amazon requirement. One platform. 18 features. Full circle.
+Every Amazon requirement. One platform. 21 features. Full circle.
 
 ---
 
-## SLIDE 4: 18 Features Built in 48 Hours
+## SLIDE 4: 21 Features Built in 48 Hours
 
 | # | Feature | What It Does |
 |---|---------|-------------|
-| 1 | **AI Grading Engine** | Nova Micro grades A/B/C/D in <2 seconds |
+| 1 | **AI Grading Engine** | Nova Lite grades A/B/C/D in <2 seconds |
 | 2 | **Product Health Card** | Appearance + Functional + Packaging trust scores |
 | 3 | **ReBridge ID** | Auto-generates RB-2026-XXXXXX for every item |
 | 4 | **Smart Dropdowns** | Category-specific conditions + "Other" option |
@@ -66,6 +66,9 @@ Every Amazon requirement. One platform. 18 features. Full circle.
 | 16 | **QR + Share** | Scannable QR deep-links to any health card |
 | 17 | **Bulk Upload** | CSV → batch AI grading with progress + CSV export |
 | 18 | **Location Discovery** | City/Locality filter connects buyers to nearby sellers |
+| 19 | **Image Upload + AI Vision** | Real photo analysis via Nova Lite multimodal |
+| 20 | **Price Intelligence** | Market price range from similar graded items |
+| 21 | **S3 Image Storage** | Persistent photos visible across all pages |
 
 ---
 
@@ -74,14 +77,15 @@ Every Amazon requirement. One platform. 18 features. Full circle.
 | Layer | Choice |
 |-------|--------|
 | Frontend | React + Tailwind → **S3 + CloudFront** (HTTPS) |
-| Backend | **AWS Lambda** × 9 functions (Python 3.12) |
+| Backend | **AWS Lambda** × 10 functions (Python 3.12) |
 | API | **API Gateway** — HTTP + WebSocket |
-| AI | **Amazon Bedrock** — Nova Micro (`apac.amazon.nova-micro-v1:0`) |
+| AI | **Amazon Bedrock** — Nova Lite (vision) + Nova Micro (text) |
 | Database | **DynamoDB** — 3 tables + GSI |
+| Storage | **Amazon S3** — product image persistence |
 | Real-time | WebSocket API Gateway + Lambda broadcast |
 | Dev | Built with **Kiro** spec-driven IDE |
 
-✅ 100% AWS-native. Zero third-party APIs. Fully serverless. Scales to millions.
+✅ 100% AWS-native. Zero third-party APIs. Fully serverless. Multimodal vision. Scales to millions.
 
 ---
 
@@ -114,7 +118,7 @@ Every Amazon requirement. One platform. 18 features. Full circle.
 | 6 | **Green Credits** — watch wallet grow with each evaluation |
 | 7 | **AI Purchase Advisor** — compatibility check before buying |
 
-**Built in 48 hours. 18 features. 9 Lambda functions. 3 DynamoDB tables. Fully deployed on AWS. Ready to scale.**
+**Built in 48 hours. 21 features. 10 Lambda functions. 3 DynamoDB tables. S3 image storage. Fully deployed on AWS. Ready to scale.**
 
 **Next:** Geo-Intelligent Local Exchange — radius filtering, haversine ranking, carbon savings, community pickup hubs.
 

@@ -48,7 +48,7 @@ Return initiated
 
 ---
 
-## Features (18)
+## Features (20+)
 
 ### Core AI
 
@@ -191,6 +191,26 @@ Return initiated
 - Connects buyers to nearby sellers who can then negotiate via the existing P2P chat
 - No geo libraries needed — lightweight text-based matching
 
+#### 19. Real Image Upload + AI Vision Analysis
+- Upload product photos directly from the evaluation form
+- Images analyzed by **Amazon Nova Lite** (multimodal vision model) via Bedrock converse() API
+- AI uses the photo as primary evidence for appearance scoring
+- Photos stored permanently in **S3** (`rebridge-product-images` bucket)
+- Image URL saved to DynamoDB and displayed across all pages
+- Product photos visible in: Result page, Product Gallery, My Evaluations, Shop cards, QR deep-links
+
+#### 20. Similar Item Price Intelligence
+- After grading, scans DynamoDB for items with same category + same grade + suggested_price > 0
+- Calculates price range from up to 10 similar items
+- Displays: "📊 Similar Grade B Electronics: ₹2,900–₹3,300 (based on 5 items)"
+- Helps sellers price competitively based on market data
+
+#### 21. S3 Persistent Image Storage
+- Dedicated S3 bucket with public read access for product photos
+- Images uploaded as `{item_id}.jpg` — permanent, shareable URLs
+- Photos render in Shop cards, Product Gallery expanded rows, and QR-linked health cards
+- Supports the full product lifecycle from grading to resale
+
 ---
 
 ## Future Development / Roadmap
@@ -225,8 +245,9 @@ Return initiated
 | **Backend** | AWS Lambda (Python 3.12) × 9 functions | Serverless compute |
 | **HTTP API** | Amazon API Gateway (HTTP API) | REST endpoints + CORS |
 | **WebSocket API** | Amazon API Gateway (WebSocket) | Real-time P2P chat |
-| **AI/ML** | Amazon Bedrock — Nova Micro | Grading, routing, NLP search |
+| **AI/ML** | Amazon Bedrock — Nova Lite (multimodal vision) + Nova Micro (text) | Grading with image analysis, NLP search, Purchase Advisor |
 | **Database** | DynamoDB (3 tables, on-demand) | Zero-config storage |
+| **Storage** | Amazon S3 (`rebridge-product-images`) | Persistent product photo storage |
 | **QR** | qrcode.react + api.qrserver.com | Scannable health card verification |
 | **Dev Tooling** | Kiro IDE (spec-driven) | AI-assisted implementation |
 
@@ -266,8 +287,14 @@ Return initiated
       │  │PK: item_id       │ │PK: user_id  │ │PK: connectionId │  │
       │  │Fields: grade,    │ │total_credits │ │GSI: itemId-index│  │
       │  │route, price,     │ │             │ │sender, itemId   │  │
-      │  │trust, user_id    │ │             │ │                 │  │
+      │  │trust, image_url  │ │             │ │                 │  │
       │  └──────────────────┘ └─────────────┘ └─────────────────┘  │
+      └─────────────────────────────────────────────────────────────┘
+
+      ┌─────────────────────────────────────────────────────────────┐
+      │                     Amazon S3                                 │
+      │  Bucket: rebridge-product-images                             │
+      │  Pattern: {item_id}.jpg │ Public read │ ap-south-1           │
       └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -416,7 +443,7 @@ ReBridge/
 ### Prerequisites
 - Python 3.12+, Node.js 18+
 - AWS CLI configured (default profile)
-- Bedrock model access: Nova Micro in ap-south-1
+- Bedrock model access: Nova Lite + Nova Micro in ap-south-1
 
 ### Backend
 ```bash
