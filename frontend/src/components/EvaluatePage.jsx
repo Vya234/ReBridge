@@ -56,6 +56,7 @@ const REPAIR_OPTIONS = [
 
 function EvaluatePage({ onSubmit, loading, prefillItemId }) {
   const [formData, setFormData] = useState({
+    product_title: '',
     item_id: prefillItemId || '',
     category: '',
     condition_notes: '',
@@ -181,6 +182,7 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     e.preventDefault()
     const conditionValue = isOtherCondition ? formData.custom_condition : formData.condition_notes
     const payload = {
+      product_title: formData.product_title,
       item_id: formData.item_id,
       category: formData.category,
       condition_notes: conditionValue,
@@ -198,7 +200,7 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
   }
 
   const conditionFilled = isOtherCondition ? formData.custom_condition.trim() : formData.condition_notes
-  const isValid = formData.category && conditionFilled && formData.simulated_image_label && formData.city.trim()
+  const isValid = formData.product_title.trim() && formData.category && conditionFilled && formData.simulated_image_label && formData.city.trim()
 
   return (
     <div className="min-h-[85vh] px-6 md:px-12 max-w-7xl mx-auto py-12">
@@ -228,6 +230,21 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
         {/* Right column — form */}
         <div className="md:col-span-7 md:col-start-6">
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Product Title */}
+            <div>
+              <label className="block text-[11px] font-sans uppercase tracking-[0.2em] text-charcoal/40 mb-2">
+                Product Title
+              </label>
+              <input
+                type="text"
+                name="product_title"
+                value={formData.product_title}
+                onChange={handleChange}
+                placeholder="e.g., iPhone 13 Pro, Boat Earphones, Dell XPS"
+                className="input-editorial"
+              />
+            </div>
+
             {/* Re-evaluate toggle */}
             <div className="flex items-center gap-3">
               <label className="relative inline-flex items-center cursor-pointer">

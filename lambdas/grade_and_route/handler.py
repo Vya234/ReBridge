@@ -37,8 +37,10 @@ wallet_table = dynamodb.Table(WALLET_TABLE)
 s3_client = boto3.client("s3", region_name=REGION)
 
 
-def build_prompt(category: str, condition_notes: str, simulated_image_label: str, return_reason: str = "", warranty_left: str = "", repair_history: str = "") -> str:
+def build_prompt(category: str, condition_notes: str, simulated_image_label: str, return_reason: str = "", warranty_left: str = "", repair_history: str = "", product_title: str = "") -> str:
     extra_context = ""
+    if product_title:
+        extra_context += f"\n- Product Title: {product_title}"
     if return_reason:
         extra_context += f"\n- Return Reason: {return_reason}"
     if warranty_left:
@@ -177,6 +179,7 @@ def lambda_handler(event, context):
         repair_history = body.get("repair_history", "")
         city = body.get("city", "")
         locality = body.get("locality", "")
+        product_title = body.get("product_title", "")
 
         # Handle optional image upload (base64 string)
         image_bytes = None
@@ -188,7 +191,7 @@ def lambda_handler(event, context):
                 image_bytes = None
 
         # Call Nova for grading (with optional image)
-        prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history)
+        prompt = build_prompt(category, condition_notes, simulated_image_label, return_reason, warranty_left, repair_history, product_title)
         ai_result = invoke_nova(prompt, image_bytes)
 
         # Upload image to S3 if present
@@ -233,6 +236,7 @@ def lambda_handler(event, context):
         record = {
             "item_id": item_id,
             "user_id": user_id,
+            "product_title": product_title,
             "category": category,
             "condition_score": ai_result.get("confidence_score", 0.0),
             "grade": grade,
