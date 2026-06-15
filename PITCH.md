@@ -41,11 +41,11 @@ Return → AI computes Value Recovery Score → Optimal Routing
         → AI Purchase Advisor empowers smart buying & prevents future returns
 ```
 
-Every Amazon requirement. One platform. 21 features. Full circle.
+Every Amazon requirement. One platform. 22 features. Full circle.
 
 ---
 
-## SLIDE 4: 21 Features Built in 48 Hours
+## SLIDE 4: 22 Features Built in 48 Hours
 
 | # | Feature | What It Does |
 |---|---------|-------------|
@@ -70,6 +70,7 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 | 19 | **Image Upload + AI Vision** | Real photo upload with auto-compression + Nova Lite multimodal vision analysis |
 | 20 | **Price Intelligence** | Market price range from similar graded items |
 | 21 | **S3 Image Storage** | Persistent photos visible across all pages |
+| 22 | **Seller Analytics Dashboard** | Tracks return reasons, identifies patterns, AI suggestions to prevent returns |
 
 ---
 
@@ -121,7 +122,7 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 | 6 | **Green Credits** — watch wallet grow with each evaluation |
 | 7 | **AI Purchase Advisor** — compatibility check before buying |
 
-**Built in 48 hours. 21 features. 10 Lambda functions. 3 DynamoDB tables. S3 image storage. Fully deployed on AWS. Ready to scale.**
+**Built in 48 hours. 22 features. 10 Lambda functions. 3 DynamoDB tables. S3 image storage. Fully deployed on AWS. Ready to scale.**
 
 **Next:** Geo-Intelligent Local Exchange — radius filtering, haversine ranking, carbon savings, community pickup hubs. Enterprise Bulk Image Upload — processing real product images at scale via CSV URL ingestion or ZIP file uploads.
 

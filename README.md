@@ -481,7 +481,7 @@ aws cloudfront create-invalidation --distribution-id YOUR_ID --paths "/*"
 | Config | Value |
 |--------|-------|
 | Region | ap-south-1 (Mumbai) |
-| Bedrock Model | apac.amazon.nova-micro-v1:0 |
+| Bedrock Model | apac.amazon.nova-lite-v1:0 |
 | HTTP API | s3r8aqjg75.execute-api.ap-south-1.amazonaws.com |
 | WebSocket | kvhtc0th50.execute-api.ap-south-1.amazonaws.com/production |
 | CloudFront | d12xi8surv8so8.cloudfront.net |
