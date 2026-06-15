@@ -18,6 +18,14 @@
 
 **ReBridge is an AI-powered circular commerce platform that gives every returned Amazon product a second life — graded, priced, routed, and resold in seconds.**
 
+## From Return to Resale: The Circular Commerce Loop
+
+*The complete ReBridge lifecycle, from AI-powered product evaluation to trusted resale and sustainability impact.*
+
+<p align="center">
+  <img src="./assets/rebridge-circular-commerce-loop.png" alt="ReBridge Circular Commerce Workflow" width="100%">
+</p>
+
 ---
 
 ## Problem Statement
