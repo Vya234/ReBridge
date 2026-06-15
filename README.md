@@ -192,7 +192,11 @@ Return initiated
 - No geo libraries needed — lightweight text-based matching
 
 #### 19. Real Image Upload + AI Vision Analysis
-- Upload product photos directly from the evaluation form
+- Upload product photos directly from the evaluation form (drag-and-drop or click)
+- **Accepted formats:** JPG, JPEG, PNG, WebP
+- **Max file size:** 5MB — shows error for larger files
+- **Auto-compression:** Images resized to max 1920px and compressed to JPEG quality 0.8 (most photos under 1MB)
+- Shows "Compressing image..." loading state and "Photo ready (245 KB)" after processing
 - Images analyzed by **Amazon Nova Lite** (multimodal vision model) via Bedrock converse() API
 - AI uses the photo as primary evidence for appearance scoring
 - Photos stored permanently in **S3** (`rebridge-product-images` bucket)

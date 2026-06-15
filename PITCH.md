@@ -66,7 +66,7 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 | 16 | **QR + Share** | Scannable QR deep-links to any health card |
 | 17 | **Bulk Upload** | CSV → batch AI grading with progress + CSV export |
 | 18 | **Location Discovery** | City/Locality filter connects buyers to nearby sellers |
-| 19 | **Image Upload + AI Vision** | Real photo analysis via Nova Lite multimodal |
+| 19 | **Image Upload + AI Vision** | Real photo upload with auto-compression + Nova Lite multimodal vision analysis |
 | 20 | **Price Intelligence** | Market price range from similar graded items |
 | 21 | **S3 Image Storage** | Persistent photos visible across all pages |
 
