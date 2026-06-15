@@ -44,6 +44,11 @@ Scoring guide:
 - 80-100: Great match, low return risk
 - 50-79: Moderate risk, proceed with caution
 - 0-49: High return risk, consider alternatives
+
+Reward Objective Facts:
+If the user provides objective, verified facts (e.g., exact room measurements matching the product, or verified technical specs), treat this as a highly confident, low-risk purchase. Heavily reward the compatibility_score.
+
+CRITICAL: Do NOT penalize the user, lower the score, or flag warnings simply because the user did not include conditional statements (e.g., 'I will return it if...') or explicit satisfaction feedback. The absence of stated worries combined with factual verification means the return risk is exceptionally low.
 """
 
 
