@@ -201,9 +201,16 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
 
           {/* Route Journey */}
           <div className="md:col-span-9">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-4">
-              Routing Decision
-            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-charcoal/40 font-sans">
+                Optimal Value Recovery
+              </p>
+              {result.recovery_score > 0 && (
+                <span className="px-2.5 py-1 bg-sage-light border border-sage/20 rounded-full text-[11px] font-sans font-medium text-sage">
+                  {result.recovery_score}% value retained
+                </span>
+              )}
+            </div>
             <JourneyTracker currentRoute={route} />
           </div>
         </div>
@@ -274,6 +281,35 @@ function ResultPage({ result, onViewHealthCard, loading, autoOpenChat, previousG
               <TrustBar label="Appearance" value={result.trust_breakdown.appearance || result.trust_breakdown.cosmetic} delay={0} />
               <TrustBar label="Functional" value={result.trust_breakdown.functional} delay={150} />
               <TrustBar label="Packaging" value={result.trust_breakdown.packaging} delay={300} />
+            </div>
+          </div>
+        )}
+
+        {/* Sustainability Impact */}
+        {(result.carbon_saved_kg || result.water_saved_liters) && (
+          <div className="p-8 md:p-12 border-t border-charcoal/5">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-5">
+              Sustainability Impact
+            </p>
+            <div className="flex flex-wrap gap-6">
+              {result.carbon_saved_kg > 0 && (
+                <div className="flex items-center gap-3 px-5 py-3 bg-sage-light/50 border border-sage/15 rounded-xl">
+                  <span className="text-2xl">🌱</span>
+                  <div>
+                    <p className="font-serif text-xl font-bold text-sage">{result.carbon_saved_kg} kg</p>
+                    <p className="text-[10px] uppercase tracking-wider text-sage/70 font-sans">CO₂ Prevented</p>
+                  </div>
+                </div>
+              )}
+              {result.water_saved_liters > 0 && (
+                <div className="flex items-center gap-3 px-5 py-3 bg-blue-50/50 border border-blue-200/30 rounded-xl">
+                  <span className="text-2xl">💧</span>
+                  <div>
+                    <p className="font-serif text-xl font-bold text-blue-600">{result.water_saved_liters}L</p>
+                    <p className="text-[10px] uppercase tracking-wider text-blue-500/70 font-sans">Water Saved</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

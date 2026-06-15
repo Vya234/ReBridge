@@ -302,6 +302,75 @@ function SellerPortal() {
           )}
         </div>
       )}
+
+      {/* Seller Return Analytics (Demo) */}
+      <div className="mt-16 pt-12 border-t border-charcoal/8">
+        <p className="section-num mb-4">Intelligence</p>
+        <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal leading-tight mb-8">
+          Seller Return <span className="italic text-terracotta">Analytics</span>
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Top Return Reasons */}
+          <div className="bg-white border border-charcoal/6 rounded-xl p-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-4">Top Return Reasons</p>
+            <div className="space-y-3">
+              {[
+                { reason: 'Changed Mind', pct: 42 },
+                { reason: 'Wrong Size', pct: 23 },
+                { reason: 'Defective', pct: 18 },
+                { reason: 'Not as Described', pct: 12 },
+                { reason: 'Other', pct: 5 },
+              ].map(({ reason, pct }) => (
+                <div key={reason} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <span className="font-sans text-xs text-charcoal/60">{reason}</span>
+                      <span className="font-serif text-sm font-semibold text-charcoal">{pct}%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-charcoal/5 rounded-full overflow-hidden">
+                      <div className="h-full bg-terracotta/60 rounded-full" style={{ width: `${pct}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Most Returned Category */}
+          <div className="bg-white border border-charcoal/6 rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-charcoal/40 font-sans mb-4">Most Returned Category</p>
+              <p className="font-serif text-4xl font-bold text-charcoal mb-2">Electronics</p>
+              <p className="font-sans text-xs text-charcoal/50">38% of all returns in your inventory</p>
+            </div>
+            <div className="mt-6 flex gap-2">
+              {['Electronics', 'Clothing', 'Home', 'Books'].map((cat, i) => (
+                <span key={cat} className={`px-2 py-1 rounded text-[10px] font-sans ${i === 0 ? 'bg-terracotta/10 text-terracotta font-medium' : 'bg-charcoal/[0.04] text-charcoal/40'}`}>
+                  {cat}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Suggestion */}
+          <div className="bg-sage-light/30 border border-sage/15 rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-sage/70 font-sans mb-4">AI Suggestion</p>
+              <p className="font-serif text-lg font-semibold text-charcoal mb-3">Reduce Apparel Returns</p>
+              <p className="font-sans text-sm text-charcoal/60 leading-relaxed">
+                Improve product sizing charts to reduce clothing returns by an estimated <span className="font-semibold text-sage">15%</span>.
+                Wrong Size accounts for 23% of all returns.
+              </p>
+            </div>
+            <div className="mt-4">
+              <span className="px-3 py-1.5 bg-sage/10 border border-sage/20 rounded-full text-[10px] font-sans font-medium text-sage">
+                💡 Actionable Insight
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

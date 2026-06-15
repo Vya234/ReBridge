@@ -46,8 +46,8 @@ def build_prompt(category: str, condition_notes: str, simulated_image_label: str
     if repair_history:
         extra_context += f"\n- Repair History: {repair_history}"
 
-    return f"""You are a product grading AI for a returns routing system.
-Given the item details below (and the uploaded product photo if provided), evaluate the item and respond with ONLY valid JSON — no markdown, no explanation.
+    return f"""You are a Value Recovery Optimizer for a returned product lifecycle system.
+Given the item details below (and the uploaded product photo if provided), assess the item's condition and determine the OPTIMAL route that maximizes value recovery and sustainability.
 
 Item Details:
 - Category: {category}
@@ -56,11 +56,12 @@ Item Details:
 
 If a product photo is provided, use it to assess visible cosmetic damage, wear, scratches, cracks, stains, and overall appearance. The photo is the primary evidence for appearance scoring.
 
-Respond with exactly this JSON structure:
+Respond with ONLY valid JSON — no markdown, no explanation:
 {{
   "grade": "A|B|C|D",
   "condition_summary": "one sentence summary",
   "route_decision": "Resell|Refurbish|Donate|Recycle",
+  "recovery_score": 0-100,
   "confidence_score": 0.0-1.0,
   "trust_breakdown": {{
     "appearance": 0.0-1.0,
@@ -69,23 +70,26 @@ Respond with exactly this JSON structure:
   }}
 }}
 
-Routing rules:
-- Grade A → Resell
-- Grade B → Refurbish
-- Grade C → Donate
-- Grade D → Recycle
+Value Recovery Optimization Rules:
+- recovery_score represents the percentage of original value that can be retained through the chosen route
+- Choose route based on MAXIMUM value recovery potential:
+  - Resell: Item retains >70% value. Like new or minor cosmetic wear, fully functional.
+  - Refurbish: Item retains 40-70% value. Needs minor repair/cleaning but core functionality is intact.
+  - Donate: Item retains <40% value but is still usable. Visible damage, functional issues.
+  - Recycle: Item is non-functional, safety hazard, or destroyed. Material recovery only.
 
 Grading criteria:
-- Grade A: Like new, no visible damage, all accessories present.
-- Grade B: Minor cosmetic wear only (scratches, scuffs), fully functional. Missing accessories alone is acceptable for Grade B.
-- Grade C: Visible damage, may have functional issues, significantly incomplete.
-- Grade D: Severe damage, non-functional, or safety concerns.
+- Grade A: Like new, no visible damage, all accessories present. recovery_score 80-100.
+- Grade B: Minor cosmetic wear, fully functional. Missing accessories acceptable. recovery_score 60-79.
+- Grade C: Visible damage, may have functional issues. recovery_score 30-59.
+- Grade D: Severe damage, non-functional, or safety concerns. recovery_score 0-29.
 
 Important rules:
-- Missing accessories alone should NOT drop an item below Grade B.
-- Packaging score should NOT affect the grade — only appearance and functional scores determine the grade and routing.
-- If warranty_remaining is '6-12 months' or 'More than 1 year', upgrade the grade by one level (e.g. D→C, C→B) unless the item is completely destroyed or a safety hazard.
-- If a photo is provided, weight the appearance score heavily based on what you see in the image.
+- Missing accessories alone should NOT drop below Grade B.
+- Packaging score should NOT affect the grade — only appearance and functional scores matter.
+- If warranty_remaining is '6-12 months' or 'More than 1 year', upgrade recovery_score by 10 points (max 100) unless destroyed.
+- If a photo is provided, weight appearance score heavily based on what you see.
+- Factor in market demand for the category when determining recovery_score.
 """
 
 
@@ -206,6 +210,20 @@ def lambda_handler(event, context):
         route = ai_result["route_decision"]
         credits_earned = GREEN_CREDITS.get(route, 0)
 
+        # Calculate sustainability metrics
+        SUSTAINABILITY = {
+            "Resell": {"carbon_saved_kg": 5.2, "water_saved_liters": 120},
+            "Refurbish": {"carbon_saved_kg": 3.8, "water_saved_liters": 80},
+            "Donate": {"carbon_saved_kg": 1.5, "water_saved_liters": 10},
+            "Recycle": {"carbon_saved_kg": 1.5, "water_saved_liters": 10},
+        }
+        sustainability = SUSTAINABILITY.get(route, {"carbon_saved_kg": 0, "water_saved_liters": 0})
+        carbon_saved_kg = sustainability["carbon_saved_kg"]
+        water_saved_liters = sustainability["water_saved_liters"]
+
+        # Get recovery score from AI response
+        recovery_score = ai_result.get("recovery_score", 0)
+
         # Calculate suggested resell price based on grade
         grade = ai_result["grade"]
         price_multiplier = {"A": 0.80, "B": 0.60, "C": 0.30, "D": 0.0}
@@ -232,6 +250,9 @@ def lambda_handler(event, context):
             "locality": locality,
             "has_image": image_bytes is not None,
             "image_url": image_url,
+            "recovery_score": recovery_score,
+            "carbon_saved_kg": carbon_saved_kg,
+            "water_saved_liters": water_saved_liters,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
