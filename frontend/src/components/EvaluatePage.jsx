@@ -72,6 +72,9 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [imageBase64, setImageBase64] = useState(null)
+  const [imageError, setImageError] = useState('')
+  const [imageCompressing, setImageCompressing] = useState(false)
+  const [imageSize, setImageSize] = useState(null)
 
   const conditions = formData.category ? CONDITION_OPTIONS[formData.category] || [] : []
   const isOtherCondition = formData.condition_notes === 'Other (describe below)'
@@ -101,11 +104,65 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     setFormData(updated)
   }
 
-  const handleImageUpload = (e) => {
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+  const MAX_SIZE = 5 * 1024 * 1024 // 5MB
+  const MAX_DIM = 1920
+
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        let { width, height } = img
+        // Resize if needed
+        if (width > MAX_DIM || height > MAX_DIM) {
+          const ratio = Math.min(MAX_DIM / width, MAX_DIM / height)
+          width = Math.round(width * ratio)
+          height = Math.round(height * ratio)
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        canvas.toBlob((blob) => {
+          resolve(blob)
+        }, 'image/jpeg', 0.8)
+      }
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
+
+    setImageError('')
+    setImageBase64(null)
+    setImageSize(null)
+
+    // Validate type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setImageError('Unsupported format. Please use JPG, PNG, or WebP.')
+      setImageFile(null)
+      setImagePreview(null)
+      return
+    }
+
+    // Validate size
+    if (file.size > MAX_SIZE) {
+      setImageError('Image too large. Please use a photo under 5MB.')
+      setImageFile(null)
+      setImagePreview(null)
+      return
+    }
+
     setImageFile(file)
-    setImagePreview(URL.createObjectURL(file))
+    setImageCompressing(true)
+
+    // Compress
+    const compressed = await compressImage(file)
+    setImagePreview(URL.createObjectURL(compressed))
+    setImageSize(Math.round(compressed.size / 1024))
 
     // Auto-set image label
     setFormData(prev => ({ ...prev, simulated_image_label: 'user_uploaded_image' }))
@@ -113,12 +170,11 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
     // Convert to base64
     const reader = new FileReader()
     reader.onload = () => {
-      const result = reader.result
-      // Strip data:image/...;base64, prefix
-      const base64 = result.split(',')[1]
+      const base64 = reader.result.split(',')[1]
       setImageBase64(base64)
+      setImageCompressing(false)
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(compressed)
   }
 
   const handleSubmit = (e) => {
@@ -273,28 +329,36 @@ function EvaluatePage({ onSubmit, loading, prefillItemId }) {
               <div className="relative">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png,.webp"
                   onChange={handleImageUpload}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
                 <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
-                  imagePreview ? 'border-sage/40 bg-sage-light/30' : 'border-charcoal/15 hover:border-terracotta/40'
+                  imagePreview ? 'border-sage/40 bg-sage-light/30' : imageError ? 'border-red-300 bg-red-50/30' : 'border-charcoal/15 hover:border-terracotta/40'
                 }`}>
-                  {imagePreview ? (
+                  {imageCompressing ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="inline-block w-4 h-4 border-2 border-charcoal/20 border-t-charcoal rounded-full animate-spin"></span>
+                      <span className="font-sans text-sm text-charcoal/50">Compressing image...</span>
+                    </div>
+                  ) : imagePreview ? (
                     <div className="flex items-center gap-4">
                       <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-lg" />
                       <div className="text-left">
                         <p className="font-sans text-sm text-charcoal/70">{imageFile?.name}</p>
-                        <p className="font-sans text-xs text-sage">✓ Photo ready for AI analysis</p>
+                        <p className="font-sans text-xs text-sage">✓ Photo ready ({imageSize} KB)</p>
                       </div>
                     </div>
                   ) : (
                     <>
                       <p className="font-sans text-sm text-charcoal/40">📷 Drop a photo or click to browse</p>
-                      <p className="font-sans text-[10px] text-charcoal/25 mt-1">AI will analyze visible damage, wear, and condition</p>
+                      <p className="font-sans text-[10px] text-charcoal/25 mt-1">JPG, PNG, WebP — max 5MB — auto-compressed for AI</p>
                     </>
                   )}
                 </div>
+                {imageError && (
+                  <p className="mt-2 font-sans text-xs text-red-500">{imageError}</p>
+                )}
               </div>
             </div>
 
