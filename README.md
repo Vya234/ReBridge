@@ -48,19 +48,23 @@ Return initiated
 
 ---
 
-## Features (20+)
+## Features (22)
 
 ### Core AI
 
-#### 1. AI Grading & Routing Engine
-- Amazon Nova Micro via Bedrock (`apac.amazon.nova-micro-v1:0`)
+#### 1. AI Grading & Value Recovery Routing Engine
+- Powered by **Amazon Nova Lite** (multimodal) via Bedrock converse() API
+- Acts as a **Value Recovery Optimizer** — calculates a dynamic `recovery_score` (0–100) to choose the optimal route based on value retention and market demand
 - Grades: A (Excellent), B (Good), C (Fair), D (Poor)
-- Routes: A→Resell, B→Refurbish, C→Donate, D→Recycle
+- Routes intelligently: Resell / Refurbish / Donate / Recycle — driven by recovery potential, not rigid rules
 - Sub-2-second evaluation with confidence scores
-- Custom rules: warranty upgrades grade, missing accessories ≥ B, packaging doesn't affect grade
+- Custom rules: warranty upgrades recovery score, missing accessories ≥ B, packaging doesn't affect grade
+- Calculates sustainability metrics per transaction: kg CO₂ prevented, liters water saved
 
 #### 2. Product Health Card
 - Trust breakdown: Appearance, Functional, Packaging scores (0–100%)
+- **Optimal Value Recovery** display with recovery_score percentage
+- **Sustainability Impact** block: 🌱 kg CO₂ Prevented + 💧 Liters Water Saved
 - Confidence score with visual progress bar
 - Condition summary (AI-generated one-sentence)
 - Route journey tracker (visual pipeline)
@@ -215,6 +219,13 @@ Return initiated
 - Photos render in Shop cards, Product Gallery expanded rows, and QR-linked health cards
 - Supports the full product lifecycle from grading to resale
 
+#### 22. Seller Return Analytics Dashboard
+- Intelligence tool integrated into the Seller Portal
+- Tracks **top return reasons** with visual percentage breakdown (Changed Mind 42%, Wrong Size 23%, Defective 18%)
+- Identifies the **most returned category** with distribution insights
+- Provides **actionable AI suggestions** to help sellers prevent future returns (e.g. "Improve sizing charts to reduce apparel returns by 15%")
+- Enables data-driven decision making for inventory and listing optimization
+
 ---
 
 ## Future Development / Roadmap
@@ -224,6 +235,7 @@ Return initiated
 - **Seller Analytics Dashboard** — Return patterns, grade distribution, revenue insights
 - **Green Credits Redemption** — Redeem credits for discounts or donate to environmental causes
 - **Multi-language Support** — Expand trust cards to global marketplaces
+- **Enhanced Bulk Upload Vision** — Future iterations of the Seller Bulk Upload Portal will support processing real product images at scale, allowing sellers to provide image URLs directly within the upload CSV or upload a bundled ZIP file of product photos for batch AI vision analysis
 
 ---
 

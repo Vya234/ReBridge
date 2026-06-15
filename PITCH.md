@@ -34,10 +34,11 @@
 One intelligent loop that closes every gap:
 
 ```
-Return → AI grades in 2 sec → Smart routing → Health Card + Price
-  → Listed on certified store with NLP search
-    → Buyer negotiates via real-time chat
-      → Green Credits earned → AI Purchase Advisor empowers next smart buy
+Return → AI computes Value Recovery Score → Optimal Routing
+  → Health Card + Hard Carbon/Water Metrics Generated
+    → Listed on certified store with NLP search
+      → Buyer negotiates via Amazon-Mediated real-time chat
+        → AI Purchase Advisor empowers smart buying & prevents future returns
 ```
 
 Every Amazon requirement. One platform. 21 features. Full circle.
@@ -48,8 +49,8 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 
 | # | Feature | What It Does |
 |---|---------|-------------|
-| 1 | **AI Grading Engine** | Nova Lite grades A/B/C/D in <2 seconds |
-| 2 | **Product Health Card** | Appearance + Functional + Packaging trust scores |
+| 1 | **Value Recovery Optimizer** | AI calculates a 0-100 score to route items for maximum asset value |
+| 2 | **Health & Impact Card** | Trust scores + real-time Sustainability Impact (kg CO₂ & Water saved) |
 | 3 | **ReBridge ID** | Auto-generates RB-2026-XXXXXX for every item |
 | 4 | **Smart Dropdowns** | Category-specific conditions + "Other" option |
 | 5 | **Extended Fields** | Return reason, warranty, repair history → AI prompt |
@@ -57,14 +58,14 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 | 7 | **Re-evaluate** | Re-submit existing ID, shows grade change comparison |
 | 8 | **Shop Certified** | Browse refurb inventory with suggested prices |
 | 9 | **NLP Search** | "Grade A electronics under ₹20000" via Nova |
-| 10 | **P2P Chat** | WebSocket negotiation between buyer & seller |
+| 10 | **Amazon-Mediated Chat** | WebSocket negotiation layer between buyer & seller |
 | 11 | **AI Purchase Advisor** | Compatibility scoring, checklist, risks — empowers smarter buying |
 | 12 | **Product Gallery** | Public catalog with smart search + QR codes |
 | 13 | **My Evaluations** | Personal dashboard per user |
 | 14 | **Green Credits** | Per-user rewards (Donate=50, Refurbish=30...) |
 | 15 | **Smart Identity** | No login needed + duplicate name detection |
 | 16 | **QR + Share** | Scannable QR deep-links to any health card |
-| 17 | **Bulk Upload** | CSV → batch AI grading with progress + CSV export |
+| 17 | **Analytics & Bulk Portal** | CSV batch grading + Seller Analytics Dashboard to prevent returns |
 | 18 | **Location Discovery** | City/Locality filter connects buyers to nearby sellers |
 | 19 | **Image Upload + AI Vision** | Real photo upload with auto-compression + Nova Lite multimodal vision analysis |
 | 20 | **Price Intelligence** | Market price range from similar graded items |
@@ -99,6 +100,8 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 | Green Credits → loyalty | Higher LTV through engagement |
 | Sustainability | ESG brand value with conscious consumers |
 | Seller efficiency | 200 returns/month → 1 CSV upload |
+| Return Prevention | Seller Analytics Dashboard fixes root causes at the source |
+| Measurable Sustainability | Hard carbon & water metrics for corporate ESG reporting |
 
 > Every feature drives measurable Amazon revenue.
 
@@ -110,20 +113,20 @@ Every Amazon requirement. One platform. 21 features. Full circle.
 
 | Step | Demo Flow |
 |------|-----------|
-| 1 | **Evaluate** — submit item, see AI grade + price in 2 seconds |
-| 2 | **Health Card** — trust scores, QR code, share link |
+| 1 | **Evaluate** — submit item, see Value Recovery Score + Optimal Routing in 2 seconds |
+| 2 | **Health Card** — trust scores, Carbon Savings metrics, QR code, share link |
 | 3 | **Shop** — NLP search: "Grade A electronics under ₹5000" |
 | 4 | **Chat** — real-time buyer-seller negotiation |
-| 5 | **Bulk Upload** — CSV with 5 items, batch AI grading |
+| 5 | **Seller Portal** — CSV batch grading + actionable Return Analytics Dashboard |
 | 6 | **Green Credits** — watch wallet grow with each evaluation |
 | 7 | **AI Purchase Advisor** — compatibility check before buying |
 
 **Built in 48 hours. 21 features. 10 Lambda functions. 3 DynamoDB tables. S3 image storage. Fully deployed on AWS. Ready to scale.**
 
-**Next:** Geo-Intelligent Local Exchange — radius filtering, haversine ranking, carbon savings, community pickup hubs.
+**Next:** Geo-Intelligent Local Exchange — radius filtering, haversine ranking, carbon savings, community pickup hubs. Enterprise Bulk Image Upload — processing real product images at scale via CSV URL ingestion or ZIP file uploads.
 
 ---
 
 ## One Line
 
-**ReBridge gives every returned Amazon product a second life — graded by AI, priced intelligently, traded with trust, and rewarded with Green Credits.**
+**ReBridge gives every returned Amazon product a second life — optimized for value recovery, priced intelligently, traded with trust, and backed by measurable carbon savings.**
